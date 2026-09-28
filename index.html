@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GYMRAT | Hypertrophy Engine</title>
+  <title>GYMRAT | Hypertrophy & Progression Engine</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,16 +11,18 @@
 </head>
 <body>
 
-  <!-- Ambient Glow Canvas -->
+  <!-- Background Ambient Glow -->
   <div class="ambient-glow glow-top-left"></div>
   <div class="ambient-glow glow-bottom-right"></div>
 
-  <!-- Top Navigation Bar -->
+  <!-- Toast Notification Hub -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Top App Navigation -->
   <header class="app-navbar">
     <div class="navbar-inner">
-      <div class="brand-cluster">
+      <div class="brand-cluster" id="nav-brand-btn">
         <div class="brand-badge">
-          <!-- Geometric Bolt Logo -->
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
@@ -31,17 +33,23 @@
         </div>
       </div>
 
-      <!-- Right Nav Control Cluster -->
+      <!-- Navigation Tabs -->
+      <nav class="nav-links">
+        <button class="nav-tab active" data-view="view-dashboard">Dashboard</button>
+        <button class="nav-tab" data-view="view-history">History</button>
+        <button class="nav-tab" data-view="view-analytics">Analytics</button>
+        <button class="nav-tab" data-view="view-library">Library</button>
+      </nav>
+
+      <!-- User Auth Controls -->
       <div class="nav-controls">
         <div class="status-indicator-pill">
           <span class="live-dot green"></span>
           <span class="status-label">ENGINE READY</span>
         </div>
-        <div class="date-badge" id="nav-date-display">SUN, SEP 27</div>
-        
-        <!-- Dynamic Auth Button -->
+        <div class="date-badge" id="nav-date-display">MON, SEP 28</div>
         <button class="btn btn-auth" id="auth-action-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -52,54 +60,21 @@
     </div>
   </header>
 
-  <!-- Login Modal Overlay -->
-  <div class="modal-overlay" id="login-modal" style="display: none;">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="brand-badge small">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-          </svg>
-        </div>
-        <h3 class="modal-title">Athlete Access</h3>
-      </div>
-      <p class="modal-subtitle">Log in to sync your hypertrophy sessions and metrics.</p>
-      
-      <form id="login-form" class="modal-form">
-        <div class="form-group">
-          <label class="field-title" for="login-username">Athlete Name</label>
-          <input type="text" id="login-username" class="text-input" placeholder="Enter athlete name..." required />
-        </div>
-        <div class="form-group">
-          <label class="field-title" for="login-division">Division</label>
-          <select id="login-division" class="text-input">
-            <option value="GYMRAT DIVISION">GYMRAT DIVISION</option>
-            <option value="CLASSIC PHYSIQUE">CLASSIC PHYSIQUE</option>
-            <option value="POWERLIFTING CORE">POWERLIFTING CORE</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-crimson btn-block">AUTHENTICATE →</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MAIN APP CONTAINER -->
+  <!-- Main Container -->
   <main class="page-container">
 
-    <!-- ================= VIEW 1: WORKOUT HUB ================= -->
-    <div class="app-view active" id="view-workout">
+    <!-- ================= VIEW 1: DASHBOARD ================= -->
+    <section class="app-view active" id="view-dashboard">
       
-      <!-- Profile Hero Card -->
-      <section class="profile-hero-card">
-        
-        <!-- Story Avatar -->
+      <!-- Athlete Profile Hero -->
+      <div class="profile-hero-card">
         <div class="story-avatar-container" id="avatar-container" title="Click to upload custom photo">
           <input type="file" id="profile-photo-input" accept="image/*" style="display: none;" />
           <div class="story-gradient-ring"></div>
           <div class="story-avatar-inner">
             <img src="" alt="Profile Avatar" class="profile-cover-photo" id="user-profile-img" />
             <div class="avatar-empty-state" id="avatar-hint">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                 <circle cx="12" cy="13" r="4"/>
               </svg>
@@ -108,19 +83,19 @@
           </div>
         </div>
 
-        <!-- Profile Details -->
         <div class="profile-details">
           <div class="profile-header-row">
             <div>
-              <span class="pill-tag"><span class="live-dot crimson"></span>ACTIVE ATHLETE</span>
+              <span class="pill-tag"><span class="live-dot crimson"></span>ATHLETE DASHBOARD</span>
               <h2 class="profile-name">
-                <span id="hero-user-name">HARISH</span> 
+                <span id="hero-user-name">HARISH</span>
                 <span class="dimmed" id="hero-user-division">/ GYMRAT DIVISION</span>
               </h2>
             </div>
+            <button class="btn btn-outline btn-sm" id="edit-goals-btn">⚙ Set Goals</button>
           </div>
 
-          <!-- Brief Stats Strip -->
+          <!-- Brief Stats -->
           <div class="brief-stats-strip">
             <div class="stat-pill-item">
               <span class="pill-label">TODAY'S VOLUME</span>
@@ -131,12 +106,16 @@
               <span class="pill-val" id="hero-sets-logged">0</span>
             </div>
             <div class="stat-pill-item">
-              <span class="pill-label">WORKOUTS DONE</span>
+              <span class="pill-label">COMPLETED WORKOUTS</span>
               <span class="pill-val" id="hero-workouts-done">0</span>
+            </div>
+            <div class="stat-pill-item">
+              <span class="pill-label">ACTIVE STREAK</span>
+              <span class="pill-val" id="hero-streak-count">0 <small>days</small></span>
             </div>
           </div>
 
-          <!-- Interactive Weekly Progress Bar -->
+          <!-- Weekly Progress -->
           <div class="progress-block">
             <div class="progress-labels">
               <span class="prog-title">WEEKLY OVERLOAD TARGET</span>
@@ -147,23 +126,22 @@
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- Routine Split Selector -->
-      <section class="split-selection-container">
+      <!-- Quick Session Launch -->
+      <div class="split-selection-container">
         <div class="section-title-wrap">
           <span class="section-step-num">1</span>
           <div>
-            <h3 class="section-title">Choose Your Split Focus</h3>
-            <p class="section-subtitle">Select today's objective. Entering locks out distractions and opens the Logging Chamber.</p>
+            <h3 class="section-title">Launch Training Session</h3>
+            <p class="section-subtitle">Select your split focus to enter the active workout chamber.</p>
           </div>
         </div>
 
         <div class="splits-grid">
-          <!-- Push Card -->
           <div class="split-card" data-split="push">
             <div class="split-badge-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff2b43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff2b43" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="m4.93 4.93 4.24 4.24"></path>
                 <path d="m14.83 9.17 4.24-4.24"></path>
@@ -172,116 +150,253 @@
               </svg>
             </div>
             <h4 class="split-name">Push Routine</h4>
-            <p class="split-muscles">Chest • Shoulders • Triceps</p>
-            <button class="btn btn-crimson split-enter-btn">Enter Session →</button>
+            <p class="split-muscles">Chest • Deltoids • Triceps</p>
+            <button class="btn btn-crimson split-enter-btn">Start Session →</button>
           </div>
 
-          <!-- Pull Card -->
           <div class="split-card" data-split="pull">
             <div class="split-badge-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
               </svg>
             </div>
             <h4 class="split-name">Pull Routine</h4>
             <p class="split-muscles">Lats • Upper Back • Biceps</p>
-            <button class="btn btn-crimson split-enter-btn">Enter Session →</button>
+            <button class="btn btn-crimson split-enter-btn">Start Session →</button>
           </div>
 
-          <!-- Legs Card -->
           <div class="split-card" data-split="legs">
             <div class="split-badge-icon">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffaa00" stroke-width="2">
                 <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
               </svg>
             </div>
             <h4 class="split-name">Legs Routine</h4>
             <p class="split-muscles">Quads • Hamstrings • Calves</p>
-            <button class="btn btn-crimson split-enter-btn">Enter Session →</button>
+            <button class="btn btn-crimson split-enter-btn">Start Session →</button>
           </div>
         </div>
-      </section>
+      </div>
 
-    </div>
+      <!-- Live Calculated Personal Records Strip -->
+      <div class="records-container">
+        <h3 class="section-title">Verified Personal Records</h3>
+        <p class="section-subtitle">Highest recorded weight loads calculated from your logged workouts.</p>
+        <div class="records-grid" id="dashboard-pr-grid">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
 
-    <!-- ================= VIEW 2: LOGGING CHAMBER ================= -->
-    <div class="app-view" id="view-logging" style="display: none;">
-      <section class="chamber-card">
+    <!-- ================= VIEW 2: WORKOUT LOGGING CHAMBER ================= -->
+    <section class="app-view" id="view-logging" style="display: none;">
+      <div class="chamber-card">
         
-        <!-- Chamber Navigation Bar -->
+        <!-- Chamber Navigation & Active Stats Bar -->
         <div class="chamber-header">
-          <button class="btn-ghost" id="back-to-hub-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to Hub
-          </button>
-          <div class="chamber-status">
-            <span class="live-pulse"></span>
-            <span id="active-session-name">PUSH LOGGING CHAMBER</span>
+          <div class="chamber-header-left">
+            <button class="btn-ghost" id="cancel-session-btn">✕ Cancel Workout</button>
+            <div class="chamber-status">
+              <span class="live-pulse"></span>
+              <span id="active-session-title">PUSH WORKOUT</span>
+            </div>
           </div>
-        </div>
 
-        <!-- Exercise Focus & Selection -->
-        <div class="exercise-controller">
-          <label class="field-title" for="exercise-select">TARGET EXERCISE</label>
-          <select id="exercise-select" class="text-input full-width-select"></select>
-        </div>
-
-        <!-- Logging Input Box -->
-        <div class="logging-box">
-          <div class="input-inline-grid">
-            <div class="input-block">
-              <label>LOAD WEIGHT (KG)</label>
-              <div class="input-with-tag">
-                <input type="number" id="input-weight" class="text-input" placeholder="60" min="1" step="0.5" />
-                <span class="unit-tag">kg</span>
-              </div>
+          <div class="chamber-live-metrics">
+            <div class="live-metric">
+              <span class="label">TIME</span>
+              <span class="val" id="session-timer-display">00:00</span>
             </div>
-            <div class="input-block">
-              <label>REPS COMPLETED</label>
-              <div class="input-with-tag">
-                <input type="number" id="input-reps" class="text-input" placeholder="10" min="1" />
-                <span class="unit-tag">reps</span>
-              </div>
+            <div class="live-metric">
+              <span class="label">VOLUME</span>
+              <span class="val" id="session-live-volume">0 kg</span>
             </div>
-            <div class="input-block action-block">
-              <button class="btn btn-crimson" id="save-set-btn">Log Set</button>
+            <div class="live-metric">
+              <span class="label">SETS</span>
+              <span class="val" id="session-live-sets">0</span>
             </div>
           </div>
         </div>
 
-        <!-- Session Set Log Table -->
-        <div class="session-logs-section">
-          <h4 class="log-title">SESSION LOGGED SETS</h4>
-          <div class="table-responsive">
-            <table class="session-table">
-              <thead>
-                <tr>
-                  <th>SET #</th>
-                  <th>EXERCISE</th>
-                  <th>LOAD</th>
-                  <th>REPS</th>
-                  <th>NET VOLUME</th>
-                </tr>
-              </thead>
-              <tbody id="session-log-tbody">
-                <tr class="empty-row"><td colspan="5">No sets logged yet in this session.</td></tr>
-              </tbody>
-            </table>
+        <!-- Built-in Rest Timer Widget -->
+        <div class="rest-timer-bar">
+          <div class="timer-info">
+            <span class="timer-title">REST TIMER:</span>
+            <span class="timer-counter" id="timer-clock">01:30</span>
+          </div>
+          <div class="timer-presets">
+            <button class="preset-btn" data-time="30">30s</button>
+            <button class="preset-btn" data-time="60">60s</button>
+            <button class="preset-btn active" data-time="90">90s</button>
+            <button class="preset-btn" data-time="120">120s</button>
+            <button class="preset-btn" data-time="180">180s</button>
+          </div>
+          <div class="timer-actions">
+            <button class="btn btn-sm btn-outline" id="timer-toggle-btn">Start</button>
+            <button class="btn btn-sm btn-ghost" id="timer-reset-btn">Reset</button>
           </div>
         </div>
 
-        <!-- Finish Bar -->
+        <!-- Add Exercise Bar -->
+        <div class="exercise-picker-row">
+          <div class="picker-group">
+            <label class="field-title">ADD EXERCISE TO WORKOUT</label>
+            <div class="picker-flex">
+              <select id="chamber-exercise-select" class="text-input"></select>
+              <button class="btn btn-crimson" id="chamber-add-ex-btn">+ Add Exercise</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Workout Exercise Cards Container -->
+        <div class="session-exercises-list" id="active-session-exercises">
+          <!-- Multi-exercise blocks added here dynamically -->
+        </div>
+
+        <!-- Complete Workout Bar -->
         <div class="finish-session-bar">
-          <button class="btn btn-outline" id="finish-session-btn">Complete & Finish Workout</button>
+          <button class="btn btn-outline" id="abort-session-bottom-btn">Discard Session</button>
+          <button class="btn btn-crimson" id="complete-session-btn">Finish & Save Workout →</button>
         </div>
 
-      </section>
-    </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 3: WORKOUT HISTORY ================= -->
+    <section class="app-view" id="view-history" style="display: none;">
+      <div class="history-card">
+        <div class="history-header">
+          <div>
+            <h3 class="section-title">Workout History</h3>
+            <p class="section-subtitle">Review previous workout logs, exercise performance, and volume.</p>
+          </div>
+          <div class="history-filters">
+            <select id="history-filter-split" class="text-input filter-select">
+              <option value="all">All Splits</option>
+              <option value="push">Push</option>
+              <option value="pull">Pull</option>
+              <option value="legs">Legs</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="history-list" id="history-items-container">
+          <!-- Populated from storage -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 4: PROGRESS & ANALYTICS ================= -->
+    <section class="app-view" id="view-analytics" style="display: none;">
+      <div class="analytics-card">
+        <div class="analytics-header">
+          <div>
+            <h3 class="section-title">Exercise Progression</h3>
+            <p class="section-subtitle">Track strength and volume progression trends over time.</p>
+          </div>
+          <select id="analytics-exercise-picker" class="text-input filter-select"></select>
+        </div>
+
+        <div class="analytics-chart-box">
+          <div class="chart-summary-stat">
+            <span class="sub">MAX WEIGHT LOGGED</span>
+            <h2 id="chart-max-weight-val">0 kg</h2>
+          </div>
+          <div class="progression-bars" id="progression-bars-chart">
+            <!-- Dynamic CSS Bar Chart -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 5: EXERCISE LIBRARY ================= -->
+    <section class="app-view" id="view-library" style="display: none;">
+      <div class="library-card">
+        <div class="library-header">
+          <div>
+            <h3 class="section-title">Exercise Movement Index</h3>
+            <p class="section-subtitle">Muscle activation patterns and standard equipment parameters.</p>
+          </div>
+          <input type="text" id="library-search" class="text-input filter-search" placeholder="Search movements..." />
+        </div>
+
+        <div class="library-categories-nav" id="library-category-pills">
+          <button class="cat-pill active" data-cat="all">All</button>
+          <button class="cat-pill" data-cat="Chest">Chest</button>
+          <button class="cat-pill" data-cat="Back">Back</button>
+          <button class="cat-pill" data-cat="Shoulders">Shoulders</button>
+          <button class="cat-pill" data-cat="Arms">Arms</button>
+          <button class="cat-pill" data-cat="Legs">Legs</button>
+        </div>
+
+        <div class="library-grid" id="library-grid-container"></div>
+      </div>
+    </section>
 
   </main>
+
+  <!-- Login/Auth Modal -->
+  <div class="modal-overlay" id="login-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="brand-badge small">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <h3 class="modal-title">Athlete Profile</h3>
+      </div>
+      <p class="modal-subtitle">Log in to update your credentials and target volume.</p>
+      
+      <form id="login-form" class="modal-form">
+        <div class="form-group">
+          <label class="field-title" for="login-username">ATHLETE NAME</label>
+          <input type="text" id="login-username" class="text-input" placeholder="e.g. Harish" required />
+        </div>
+        <div class="form-group">
+          <label class="field-title" for="login-division">DIVISION</label>
+          <select id="login-division" class="text-input">
+            <option value="GYMRAT DIVISION">GYMRAT DIVISION</option>
+            <option value="HYPERTROPHY CORE">HYPERTROPHY CORE</option>
+            <option value="POWERLIFTING">POWERLIFTING</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-crimson btn-block">AUTHENTICATE →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Workout Summary Modal -->
+  <div class="modal-overlay" id="summary-modal" style="display: none;">
+    <div class="modal-card summary-card">
+      <div class="summary-badge-wrap">
+        <div class="summary-check-icon">✓</div>
+      </div>
+      <h3 class="modal-title text-center">WORKOUT COMPLETE</h3>
+      <p class="modal-subtitle text-center" id="summary-split-label">Push Workout Session Finished</p>
+
+      <div class="summary-stats-grid">
+        <div class="summary-stat-box">
+          <span class="label">DURATION</span>
+          <span class="val" id="summary-duration-val">00:00</span>
+        </div>
+        <div class="summary-stat-box">
+          <span class="label">TOTAL VOLUME</span>
+          <span class="val" id="summary-volume-val">0 kg</span>
+        </div>
+        <div class="summary-stat-box">
+          <span class="label">TOTAL SETS</span>
+          <span class="val" id="summary-sets-val">0</span>
+        </div>
+        <div class="summary-stat-box">
+          <span class="label">EXERCISES</span>
+          <span class="val" id="summary-exercises-val">0</span>
+        </div>
+      </div>
+
+      <button class="btn btn-crimson btn-block" id="summary-close-btn">Return to Dashboard</button>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
