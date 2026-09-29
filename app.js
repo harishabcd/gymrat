@@ -5,13 +5,15 @@ import { getFirestore, collection, addDoc, getDocs, query, orderBy, where } from
 // ==========================================
 // 1. FIREBASE CONFIGURATION
 // ==========================================
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+Config = {
+ const firebaseConfig = {
+  apiKey: "AIzaSyDMcZEWAepTtKiIucdKmXUi2euT29XPBFM",
+  authDomain: "fir-71583.firebaseapp.com",
+  projectId: "fir-71583",
+  storageBucket: "fir-71583.firebasestorage.app",
+  messagingSenderId: "131866556311",
+  appId: "1:131866556311:web:7ceea259d54cde071df6d2",
+  measurementId: "G-30YD13LH3Q"
 };
 
 const app = initializeApp(firebaseConfig);
