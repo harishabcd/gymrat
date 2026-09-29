@@ -3,38 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GYMRAT | Fitness Tracker System</title>
+    <title>GYMRAT | Advanced System Tracker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- LOGIN SYSTEM -->
     <div id="landing-page" class="login-wrapper">
         <div class="login-card">
-            <h2 id="auth-title">Login</h2>
-            <p class="subtitle" id="auth-subtitle">Welcome back to GYMRAT</p>
+            <div class="login-header">
+                <span class="system-icon">⚙️</span>
+                <h2>SYSTEM LOGIN</h2>
+                <p id="auth-subtitle">GYMRAT Administration</p>
+            </div>
             
             <form id="auth-form">
                 <div class="form-group" id="name-group" style="display: none;">
-                    <label>USERNAME</label>
-                    <input type="text" id="name" placeholder="Enter username">
+                    <label>ATHLETE NAME</label>
+                    <input type="text" id="name" placeholder="Enter full name">
                 </div>
                 <div class="form-group">
-                    <label>EMAIL</label>
-                    <input type="email" id="email" placeholder="Enter email address">
+                    <label>EMAIL ADDRESS</label>
+                    <input type="email" id="email" placeholder="admin@gymrat.local">
                 </div>
                 <div class="form-group password-group">
-                    <label>PASSWORD</label>
-                    <input type="password" id="password" placeholder="Enter password">
+                    <label>SYSTEM PASSWORD</label>
+                    <input type="password" id="password" placeholder="••••••••">
                     <span id="toggle-password" class="eye-icon">👁️</span>
                 </div>
                 
-                <p id="auth-error" class="error-msg"></p>
-                
-                <button type="button" id="btn-submit" class="btn-primary">Login</button>
+                <button type="button" id="btn-submit" class="btn-primary">Authenticate</button>
             </form>
             
-            <p class="auth-switch">Don't have an account? <span id="btn-toggle-mode" class="text-link">Register</span></p>
+            <p class="auth-switch">System Access: <span id="btn-toggle-mode" class="text-link">Request Account</span></p>
         </div>
     </div>
 
@@ -44,15 +48,16 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <h2>GYMRAT</h2>
-                <p>System Tracker</p>
+                <h2>GYMRAT <span class="badge-pro">PRO</span></h2>
+                <p>Data Management</p>
             </div>
             <ul class="sidebar-menu">
-                <li class="menu-item active" data-target="view-dashboard">Dashboard</li>
-                <li class="menu-item" data-target="view-log">Log Workout</li>
-                <li class="menu-item" data-target="view-history">Workout History</li>
-                <li class="menu-item" data-target="view-library">Exercise Library</li>
-                <li class="menu-item text-danger" id="btn-logout">Logout</li>
+                <li class="menu-item active" data-target="view-dashboard">📊 Dashboard Overview</li>
+                <li class="menu-item" data-target="view-log">📝 Log Session</li>
+                <li class="menu-item" data-target="view-history">📁 Data Records</li>
+                <li class="menu-item" data-target="view-library">📚 Exercise Directory</li>
+                <li class="menu-item" data-target="view-profile">👤 Athlete Profile</li>
+                <li class="menu-item text-danger" id="btn-logout">🚪 Terminate Session</li>
             </ul>
         </aside>
 
@@ -60,8 +65,12 @@
         <main class="main-content">
             <!-- Top Header -->
             <header class="top-header">
-                <h2>Welcome, Harish!</h2>
+                <div class="header-search">
+                    <input type="text" placeholder="Quick search system...">
+                </div>
                 <div class="user-profile">
+                    <span class="status-indicator"></span>
+                    <span id="display-user-email">User</span>
                     <div class="avatar">H</div>
                 </div>
             </header>
@@ -70,41 +79,51 @@
                 
                 <!-- VIEW: DASHBOARD -->
                 <div id="view-dashboard" class="system-view">
-                    <p class="view-desc">Track your fitness journey and achieve your goals.</p>
+                    <div class="view-header">
+                        <h2>System Dashboard</h2>
+                        <button class="btn-secondary" onclick="document.querySelector('[data-target=\'view-log\']').click()">+ Quick Log</button>
+                    </div>
                     
                     <div class="stats-container">
-                        <div class="stat-box">
-                            <h3>Total Workouts</h3>
-                            <h1 id="stat-workouts">0</h1>
+                        <div class="stat-box primary-border">
+                            <div class="stat-content">
+                                <h3>TOTAL SESSIONS</h3>
+                                <h1 id="stat-workouts">0</h1>
+                            </div>
+                            <div class="stat-icon">📈</div>
                         </div>
-                        <div class="stat-box">
-                            <h3>Total Sets Logged</h3>
-                            <h1 id="stat-sets">0</h1>
+                        <div class="stat-box success-border">
+                            <div class="stat-content">
+                                <h3>TOTAL VOLUME (KG)</h3>
+                                <h1 id="stat-volume">0</h1>
+                            </div>
+                            <div class="stat-icon">🏋️</div>
                         </div>
-                        <div class="stat-box">
-                            <h3>Calories Burned</h3>
-                            <h1 id="stat-cals">0</h1>
+                        <div class="stat-box warning-border">
+                            <div class="stat-content">
+                                <h3>CALORIES BURNED</h3>
+                                <h1 id="stat-cals">0</h1>
+                            </div>
+                            <div class="stat-icon">🔥</div>
                         </div>
                     </div>
 
                     <div class="panel">
                         <div class="panel-header">
-                            <h3>Recent Workouts</h3>
+                            <h3>Recent Database Entries</h3>
+                            <span class="badge">Last 5 records</span>
                         </div>
                         <div class="table-responsive">
                             <table class="system-table">
                                 <thead>
                                     <tr>
-                                        <th>EXERCISE</th>
-                                        <th>SETS</th>
-                                        <th>REPS</th>
-                                        <th>WEIGHT</th>
+                                        <th>EXERCISE ID</th>
                                         <th>DATE</th>
+                                        <th>METRICS (S x R x W)</th>
+                                        <th>STATUS</th>
                                     </tr>
                                 </thead>
-                                <tbody id="recent-table-body">
-                                    <!-- Populated by JS -->
-                                </tbody>
+                                <tbody id="recent-table-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -114,36 +133,49 @@
                 <div id="view-log" class="system-view" style="display: none;">
                     <div class="panel form-panel">
                         <div class="panel-header">
-                            <h3>Log New Workout</h3>
-                            <p>Record your exercise sessions and progressive overload.</p>
+                            <h3>Create Session Record</h3>
                         </div>
                         <div class="panel-body">
-                            <div class="form-group">
-                                <label>EXERCISE NAME</label>
-                                <input type="text" id="log-name" placeholder="e.g., Barbell Bench Press">
-                            </div>
                             <div class="form-row">
                                 <div class="form-group">
+                                    <label>DATE OF SESSION</label>
+                                    <input type="date" id="log-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>MUSCLE GROUP</label>
+                                    <select id="log-category" class="system-select">
+                                        <option value="Chest">Chest</option>
+                                        <option value="Back">Back</option>
+                                        <option value="Legs">Legs</option>
+                                        <option value="Shoulders">Shoulders</option>
+                                        <option value="Arms">Arms</option>
+                                        <option value="Core">Core</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>EXERCISE DESIGNATION</label>
+                                <input type="text" id="log-name" placeholder="e.g., Incline Dumbbell Press">
+                            </div>
+                            <div class="form-row-3">
+                                <div class="form-group">
                                     <label>SETS</label>
-                                    <input type="number" id="log-sets" placeholder="e.g., 4">
+                                    <input type="number" id="log-sets" placeholder="0">
                                 </div>
                                 <div class="form-group">
                                     <label>REPS</label>
-                                    <input type="number" id="log-reps" placeholder="e.g., 10">
+                                    <input type="number" id="log-reps" placeholder="0">
                                 </div>
-                            </div>
-                            <div class="form-row">
                                 <div class="form-group">
                                     <label>WEIGHT (KG)</label>
-                                    <input type="number" id="log-weight" placeholder="e.g., 80">
-                                </div>
-                                <div class="form-group">
-                                    <label>CALORIES BURNED (Est.)</label>
-                                    <input type="number" id="log-cals" placeholder="e.g., 150">
+                                    <input type="number" id="log-weight" placeholder="0.0">
                                 </div>
                             </div>
-                            <button type="button" id="btn-save-workout" class="btn-primary">Log Workout</button>
-                            <p id="save-status" class="status-msg"></p>
+                            <div class="form-group">
+                                <label>SESSION NOTES (Optional)</label>
+                                <input type="text" id="log-notes" placeholder="e.g., Felt heavy, check form next time">
+                            </div>
+                            <button type="button" id="btn-save-workout" class="btn-primary w-100">Commit Record to Database</button>
                         </div>
                     </div>
                 </div>
@@ -151,25 +183,27 @@
                 <!-- VIEW: WORKOUT HISTORY -->
                 <div id="view-history" class="system-view" style="display: none;">
                     <div class="panel">
-                        <div class="panel-header">
-                            <h3>Workout History</h3>
-                            <p>Keep a complete record of your exercise sessions.</p>
+                        <div class="panel-header flex-between">
+                            <h3>Master Data Records</h3>
+                            <div class="table-filters">
+                                <input type="text" id="search-history" placeholder="Filter by exercise...">
+                                <button class="btn-secondary" id="btn-export">Export CSV</button>
+                            </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="system-table">
+                            <table class="system-table striped-table">
                                 <thead>
                                     <tr>
+                                        <th>DATE</th>
+                                        <th>CATEGORY</th>
                                         <th>EXERCISE</th>
                                         <th>SETS</th>
                                         <th>REPS</th>
-                                        <th>WEIGHT (KG)</th>
-                                        <th>CALS</th>
-                                        <th>DATE</th>
+                                        <th>WEIGHT</th>
+                                        <th>NOTES</th>
                                     </tr>
                                 </thead>
-                                <tbody id="history-table-body">
-                                    <!-- Populated by JS -->
-                                </tbody>
+                                <tbody id="history-table-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -179,14 +213,44 @@
                 <div id="view-library" class="system-view" style="display: none;">
                     <div class="panel">
                         <div class="panel-header">
-                            <h3>Exercise Library</h3>
-                            <p>Search standard movements and target muscles.</p>
+                            <h3>Standardized Exercise Directory</h3>
                         </div>
                         <div class="panel-body">
-                            <input type="text" id="search-lib" class="search-box" placeholder="Search exercises...">
-                            <ul id="library-list" class="lib-list">
+                            <div class="library-filters">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="Push">Push</button>
+                                <button class="filter-btn" data-filter="Pull">Pull</button>
+                                <button class="filter-btn" data-filter="Legs">Legs</button>
+                            </div>
+                            <div class="library-grid" id="library-grid">
                                 <!-- Populated by JS -->
-                            </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROFILE -->
+                <div id="view-profile" class="system-view" style="display: none;">
+                    <div class="form-row">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h3>Athlete Configuration</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label>DIVISION</label>
+                                    <select class="system-select">
+                                        <option>Classic Physique</option>
+                                        <option>Powerlifting</option>
+                                        <option>General Fitness</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>WEEKLY OVERLOAD TARGET (KG)</label>
+                                    <input type="number" value="35000">
+                                </div>
+                                <button class="btn-primary w-100">Update Configuration</button>
+                            </div>
                         </div>
                     </div>
                 </div>

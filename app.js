@@ -3,16 +3,15 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 // ==========================================
-// 1. YOUR REAL FIREBASE CONFIG 
+// 1. FIREBASE CONFIGURATION
 // ==========================================
 const firebaseConfig = {
-  apiKey: "AIzaSyDMcZEWAepTtKiIucdKmXUi2euT29XPBFM",
-  authDomain: "fir-71583.firebaseapp.com",
-  projectId: "fir-71583",
-  storageBucket: "fir-71583.firebasestorage.app",
-  messagingSenderId: "131866556311",
-  appId: "1:131866556311:web:7ceea259d54cde071df6d2",
-  measurementId: "G-30YD13LH3Q"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -20,7 +19,28 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. SIDEBAR & NAVIGATION LOGIC
+// 2. SYSTEM UTILITIES & TOAST ENGINE
+// ==========================================
+function showToast(message, type = "success") {
+    const container = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `
+        <span>${type === 'success' ? '✅' : '⚠️'}</span>
+        <span>${message}</span>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Set default date picker to today
+document.getElementById("log-date").valueAsDate = new Date();
+
+// ==========================================
+// 3. NAVIGATION & VIEW LOGIC
 // ==========================================
 const landingPage = document.getElementById("landing-page");
 const appWorkspace = document.getElementById("app-workspace");
@@ -30,173 +50,200 @@ const systemViews = document.querySelectorAll(".system-view");
 function showWorkspace() {
     landingPage.style.display = "none";
     appWorkspace.style.display = "flex";
-    loadSystemData(); // Fetch DB data
+    document.getElementById("display-user-email").innerText = auth.currentUser.email;
+    loadSystemData();
 }
 
-function showLandingPage() {
-    appWorkspace.style.display = "none";
-    landingPage.style.display = "flex";
-}
-
-// Sidebar Click Logic
 menuItems.forEach(item => {
     item.addEventListener("click", () => {
-        // Remove active class from all
         menuItems.forEach(nav => nav.classList.remove("active"));
         systemViews.forEach(view => view.style.display = "none");
-        
-        // Activate clicked
         item.classList.add("active");
         document.getElementById(item.getAttribute("data-target")).style.display = "block";
     });
 });
 
 // ==========================================
-// 3. AUTHENTICATION LOGIC
+// 4. AUTHENTICATION
 // ==========================================
 let isLoginMode = true;
-
 document.getElementById("btn-toggle-mode").addEventListener("click", () => {
     isLoginMode = !isLoginMode;
-    document.getElementById("auth-title").innerText = isLoginMode ? "Login" : "Register Account";
-    document.getElementById("auth-subtitle").innerText = isLoginMode ? "Welcome back to GYMRAT" : "Join the System Tracker";
-    document.getElementById("btn-submit").innerText = isLoginMode ? "Login" : "Register";
-    document.getElementById("btn-toggle-mode").innerText = isLoginMode ? "Register" : "Login";
+    document.getElementById("btn-submit").innerText = isLoginMode ? "Authenticate" : "Create Record";
     document.getElementById("name-group").style.display = isLoginMode ? "none" : "block";
 });
 
 document.getElementById("toggle-password").addEventListener("click", () => {
-    const passInput = document.getElementById("password");
-    passInput.type = passInput.type === "password" ? "text" : "password";
+    const p = document.getElementById("password");
+    p.type = p.type === "password" ? "text" : "password";
 });
 
 onAuthStateChanged(auth, (user) => {
     if (user) showWorkspace();
-    else showLandingPage();
+    else {
+        appWorkspace.style.display = "none";
+        landingPage.style.display = "flex";
+    }
 });
 
 document.getElementById("btn-submit").addEventListener("click", async () => {
     const email = document.getElementById("email").value;
     const pass = document.getElementById("password").value;
-    const errorEl = document.getElementById("auth-error");
-    errorEl.innerText = "";
-
     try {
-        if (isLoginMode) await signInWithEmailAndPassword(auth, email, pass);
-        else await createUserWithEmailAndPassword(auth, email, pass);
-    } catch (error) { errorEl.innerText = error.message; }
+        if (isLoginMode) {
+            await signInWithEmailAndPassword(auth, email, pass);
+            showToast("System access granted.", "success");
+        } else {
+            await createUserWithEmailAndPassword(auth, email, pass);
+            showToast("Account provisioned successfully.", "success");
+        }
+    } catch (error) { showToast(error.message, "error"); }
 });
 
-document.getElementById("btn-logout").addEventListener("click", () => signOut(auth));
+document.getElementById("btn-logout").addEventListener("click", () => {
+    signOut(auth);
+    showToast("Session terminated.", "success");
+});
 
 // ==========================================
-// 4. SYSTEM DATABASE LOGIC (FIRESTORE TO TABLES)
+// 5. DATABASE OPERATIONS & TABLES
 // ==========================================
+let globalWorkouts = []; // Cache for filtering
+
 document.getElementById("btn-save-workout").addEventListener("click", async () => {
+    const dateInput = document.getElementById("log-date").value;
+    const cat = document.getElementById("log-category").value;
     const name = document.getElementById("log-name").value;
     const sets = Number(document.getElementById("log-sets").value);
     const reps = Number(document.getElementById("log-reps").value);
     const weight = Number(document.getElementById("log-weight").value);
-    const cals = Number(document.getElementById("log-cals").value);
-    const statusText = document.getElementById("save-status");
+    const notes = document.getElementById("log-notes").value;
 
-    if(!name || !sets || !reps) {
-        statusText.style.color = "#ef4444";
-        statusText.innerText = "Please fill required fields (Name, Sets, Reps).";
+    if(!name || !sets || !reps || !dateInput) {
+        showToast("Missing required metrics.", "error");
         return;
     }
 
     try {
         await addDoc(collection(db, "workouts"), {
             uid: auth.currentUser.uid,
+            date: dateInput,
+            category: cat,
             exercise: name,
             sets: sets,
             reps: reps,
             weight: weight || 0,
-            calories: cals || 0,
-            date: new Date().toISOString()
+            notes: notes || "",
+            timestamp: Date.now() // for exact ordering
         });
         
-        statusText.style.color = "#10b981";
-        statusText.innerText = "Workout successfully logged to database!";
+        showToast("Record successfully committed.", "success");
+        document.getElementById("log-name").value = "";
+        document.getElementById("log-sets").value = "";
+        document.getElementById("log-reps").value = "";
+        document.getElementById("log-weight").value = "";
+        document.getElementById("log-notes").value = "";
         
-        // Clear inputs
-        document.querySelectorAll(".form-group input").forEach(input => input.value = "");
-        setTimeout(() => statusText.innerText = "", 3000);
-        
-        loadSystemData(); // Refresh Tables
-    } catch (error) {
-        statusText.style.color = "#ef4444";
-        statusText.innerText = "Error: " + error.message;
-    }
+        loadSystemData();
+    } catch (error) { showToast(error.message, "error"); }
 });
 
 async function loadSystemData() {
     const q = query(collection(db, "workouts"), where("uid", "==", auth.currentUser.uid), orderBy("date", "desc"));
     const snapshot = await getDocs(q);
     
+    globalWorkouts = [];
     let totalWorkouts = snapshot.size;
-    let totalSets = 0;
-    let totalCals = 0;
+    let totalVolume = 0;
     
-    let recentRows = "";
-    let historyRows = "";
-    let count = 0;
-
     snapshot.forEach((doc) => {
         const data = doc.data();
-        totalSets += data.sets || 0;
-        totalCals += data.calories || 0;
-        
-        const dateStr = new Date(data.date).toLocaleDateString();
-
-        const tableRow = `
-            <tr>
-                <td><strong>${data.exercise}</strong></td>
-                <td>${data.sets}</td>
-                <td>${data.reps}</td>
-                <td>${data.weight} kg</td>
-                <td>${dateStr}</td>
-            </tr>
-        `;
-        
-        const fullHistoryRow = `
-            <tr>
-                <td><strong>${data.exercise}</strong></td>
-                <td>${data.sets}</td>
-                <td>${data.reps}</td>
-                <td>${data.weight} kg</td>
-                <td>${data.calories} kcal</td>
-                <td>${dateStr}</td>
-            </tr>
-        `;
-
-        if(count < 5) recentRows += tableRow;
-        historyRows += fullHistoryRow;
-        count++;
+        globalWorkouts.push(data);
+        totalVolume += (data.sets * data.reps * (data.weight || 1)); // Basic volume formula
     });
 
-    // Update Top Stats
+    // Update Dashboard Metrics
     document.getElementById("stat-workouts").innerText = totalWorkouts;
-    document.getElementById("stat-sets").innerText = totalSets;
-    document.getElementById("stat-cals").innerText = totalCals;
+    document.getElementById("stat-volume").innerText = totalVolume.toLocaleString();
+    document.getElementById("stat-cals").innerText = (totalWorkouts * 150).toLocaleString(); // Estimated flat rate
 
-    // Populate Tables
-    document.getElementById("recent-table-body").innerHTML = recentRows || `<tr><td colspan="5">No records found.</td></tr>`;
-    document.getElementById("history-table-body").innerHTML = historyRows || `<tr><td colspan="6">No records found.</td></tr>`;
+    renderTables(globalWorkouts);
 }
 
-// Basic Exercise Library populator
-const exercises = ["Barbell Bench Press", "Incline Dumbbell Press", "Barbell Squat", "Leg Press", "Deadlift", "Pull-ups", "Overhead Press"];
-const libList = document.getElementById("library-list");
+function renderTables(dataArray) {
+    let recentRows = "";
+    let historyRows = "";
+    
+    dataArray.forEach((data, index) => {
+        const dateStr = new Date(data.date).toLocaleDateString('en-GB');
+        const metrics = `${data.sets} x ${data.reps} x ${data.weight}kg`;
 
-function renderLibrary(filter = "") {
-    libList.innerHTML = "";
-    exercises.filter(ex => ex.toLowerCase().includes(filter.toLowerCase())).forEach(ex => {
-        const li = document.createElement("li");
-        li.innerText = ex;
-        libList.appendChild(li);
+        if(index < 5) {
+            recentRows += `
+                <tr>
+                    <td><strong>${data.exercise}</strong></td>
+                    <td>${dateStr}</td>
+                    <td>${metrics}</td>
+                    <td><span class="status-badge">Logged</span></td>
+                </tr>
+            `;
+        }
+        
+        historyRows += `
+            <tr>
+                <td>${dateStr}</td>
+                <td><strong>${data.category}</strong></td>
+                <td>${data.exercise}</td>
+                <td>${data.sets}</td>
+                <td>${data.reps}</td>
+                <td>${data.weight}</td>
+                <td style="color:#64748b; font-size:0.8rem;">${data.notes}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("recent-table-body").innerHTML = recentRows || `<tr><td colspan="4">No database records.</td></tr>`;
+    document.getElementById("history-table-body").innerHTML = historyRows || `<tr><td colspan="7">No database records.</td></tr>`;
+}
+
+// History Table Search Filter
+document.getElementById("search-history").addEventListener("input", (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = globalWorkouts.filter(w => w.exercise.toLowerCase().includes(term) || w.category.toLowerCase().includes(term));
+    renderTables(filtered);
+});
+
+// ==========================================
+// 6. EXERCISE LIBRARY ENGINE
+// ==========================================
+const libraryDB = [
+    { name: "Barbell Bench Press", type: "Push" }, { name: "Overhead Press", type: "Push" }, { name: "Tricep Dips", type: "Push" },
+    { name: "Barbell Row", type: "Pull" }, { name: "Pull-ups", type: "Pull" }, { name: "Bicep Curls", type: "Pull" },
+    { name: "Back Squat", type: "Legs" }, { name: "Romanian Deadlift", type: "Legs" }, { name: "Leg Press", type: "Legs" }
+];
+
+function renderLibrary(filterType = "all") {
+    const grid = document.getElementById("library-grid");
+    grid.innerHTML = "";
+    
+    const filtered = filterType === "all" ? libraryDB : libraryDB.filter(ex => ex.type === filterType);
+    
+    filtered.forEach(ex => {
+        grid.innerHTML += `
+            <div class="lib-card">
+                <h4>${ex.name}</h4>
+                <p>${ex.type}</p>
+            </div>
+        `;
     });
 }
+
+document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        renderLibrary(e.target.getAttribute("data-filter"));
+    });
+});
+
 renderLibrary();
-document.getElementById("search-lib").addEventListener("input", (e) => renderLibrary(e.target.value));
