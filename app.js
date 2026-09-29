@@ -1,42 +1,97 @@
 // ==========================================================
-// GYMRAT COMPLETE ENGINE: ANALYTICS, CRUD & INSIGHTS
+// GYMRAT COMPLETE ENGINE: ANATOMY REGISTRY & CORE LOGIC
 // ==========================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Built-in Movement Master Registry
+  // Comprehensive Anatomy & Exercise Master Registry
   const EXERCISE_CATALOG = [
-    { id: "bp", name: "Barbell Bench Press", split: "push", category: "Chest", equip: "Barbell" },
-    { id: "idb", name: "Incline DB Press", split: "push", category: "Chest", equip: "Dumbbells" },
-    { id: "ohp", name: "Standing Overhead Press", split: "push", category: "Shoulders", equip: "Barbell" },
-    { id: "lr", name: "Cable Lateral Raises", split: "push", category: "Shoulders", equip: "Cable Machine" },
-    { id: "tr", name: "Triceps Rope Pushdown", split: "push", category: "Arms", equip: "Cable Machine" },
-    { id: "dl", name: "Barbell Deadlift", split: "pull", category: "Back", equip: "Barbell" },
-    { id: "lp", name: "Lat Pulldown", split: "pull", category: "Back", equip: "Cable Machine" },
-    { id: "cr", name: "Chest Supported Row", split: "pull", category: "Back", equip: "Dumbbells" },
-    { id: "fp", name: "Face Pulls", split: "pull", category: "Shoulders", equip: "Cable Machine" },
-    { id: "bc", name: "Incline DB Bicep Curls", split: "pull", category: "Arms", equip: "Dumbbells" },
-    { id: "sq", name: "Barbell Back Squat", split: "legs", category: "Legs", equip: "Barbell / Rack" },
-    { id: "rdl", name: "Romanian Deadlift", split: "legs", category: "Legs", equip: "Barbell" },
-    { id: "bss", name: "Bulgarian Split Squats", split: "legs", category: "Legs", equip: "Dumbbells" },
-    { id: "lc", name: "Seated Leg Curls", split: "legs", category: "Legs", equip: "Machine" },
-    { id: "crz", name: "Standing Calf Raises", split: "legs", category: "Legs", equip: "Machine" }
+    // --- CHEST ---
+    { id: "c1", name: "Incline Bench Press (30°)", split: "push", category: "Chest", area: "Upper Chest", equip: "Barbell", cue: "Lower to upper clavicles; maximize upper pec stretch." },
+    { id: "c2", name: "Incline Dumbbell Press", split: "push", category: "Chest", area: "Upper Chest", equip: "Dumbbells", cue: "Keep elbows tucked at 45°; press with adduction." },
+    { id: "c3", name: "Low-to-High Cable Fly", split: "push", category: "Chest", area: "Upper Chest", equip: "Cable Machine", cue: "Drive hands upward following clavicular fiber angle." },
+    { id: "c4", name: "Flat Barbell Bench Press", split: "push", category: "Chest", area: "Middle Chest", equip: "Barbell", cue: "Plant feet firmly, retract scapulae, touch mid-sternum." },
+    { id: "c5", name: "Pec Deck Fly Machine", split: "push", category: "Chest", area: "Middle Chest", equip: "Machine", cue: "Maintain slight elbow bend; focus on deep horizontal adduction." },
+    { id: "c6", name: "Standard Chest Dips", split: "push", category: "Chest", area: "Lower Chest", equip: "Dip Station", cue: "Lean torso 30° forward to bias sternal/costal heads." },
+    { id: "c7", name: "High-to-Low Cable Fly", split: "push", category: "Chest", area: "Lower Chest", equip: "Cable Machine", cue: "Cross hands down toward hips to bias lower pec fibers." },
+    { id: "c8", name: "Decline Barbell Press", split: "push", category: "Chest", area: "Lower Chest", equip: "Barbell", cue: "Press along lower chest contour." },
+
+    // --- BACK ---
+    { id: "b1", name: "Lat Pulldown (Wide Grip)", split: "pull", category: "Back", area: "Width (Lats)", equip: "Cable Machine", cue: "Depress scapulae first; pull bar toward upper sternum." },
+    { id: "b2", name: "Pronated Pull-ups", split: "pull", category: "Back", area: "Width (Lats)", equip: "Pull-up Bar", cue: "Drive elbows down and back into your ribcage." },
+    { id: "b3", name: "Lat Pullover", split: "pull", category: "Back", area: "Width (Lats)", equip: "Cable / Rope", cue: "Slight elbow bend, stretch near armpit, squeeze down to hips." },
+    { id: "b4", name: "Seated Cable Row (Close Grip)", split: "pull", category: "Back", area: "Thickness", equip: "Cable Machine", cue: "Elbows tucked tight; retract lats and mid-back." },
+    { id: "b5", name: "Chest-Supported Row", split: "pull", category: "Back", area: "Thickness", equip: "Dumbbells", cue: "Chest anchored against incline pad; eliminates lower back fatigue." },
+    { id: "b6", name: "T-Bar Row", split: "pull", category: "Back", area: "Thickness", equip: "Barbell / T-Bar", cue: "Hinge at hips; drive elbows straight back." },
+    { id: "b7", name: "Dumbbell Shrugs", split: "pull", category: "Back", area: "Traps", equip: "Dumbbells", cue: "Straight elevation toward ears; hold 1s at top peak." },
+    { id: "b8", name: "Kelso Shrugs", split: "pull", category: "Back", area: "Traps", equip: "Incline Bench", cue: "Retract scapulae horizontally to target mid/lower traps." },
+    { id: "b9", name: "Barbell Deadlift", split: "pull", category: "Back", area: "Lower Back", equip: "Barbell", cue: "Drive through heels, brace core, hinge spine neutrally." },
+    { id: "b10", name: "Rack Pulls", split: "pull", category: "Back", area: "Lower Back", equip: "Power Rack", cue: "Set pins below knee; overload upper/lower back chain." },
+    { id: "b11", name: "Hyperextensions", split: "pull", category: "Back", area: "Lower Back", equip: "Roman Chair", cue: "Squeeze erector spinae and glutes at the top." },
+
+    // --- SHOULDERS ---
+    { id: "s1", name: "Standing Overhead Press", split: "push", category: "Shoulders", area: "Front Delts", equip: "Barbell", cue: "Full vertical press; lock out with head through the window." },
+    { id: "s2", name: "Seated Dumbbell Shoulder Press", split: "push", category: "Shoulders", area: "Front Delts", equip: "Dumbbells", cue: "Bench angle 60-75°; press through the shoulder plane." },
+    { id: "s3", name: "Cable Lateral Raises", split: "push", category: "Shoulders", area: "Side Delts", equip: "Cable Machine", cue: "Consistent tension from bottom to 90° abduction." },
+    { id: "s4", name: "Dumbbell Lateral Raises", split: "push", category: "Shoulders", area: "Side Delts", equip: "Dumbbells", cue: "Lead with elbows; avoid swinging torso." },
+    { id: "s5", name: "Reverse Pec Deck", split: "pull", category: "Shoulders", area: "Rear Delts", equip: "Machine", cue: "Keep elbows level with shoulders; pull outward horizontally." },
+    { id: "s6", name: "Rope Face Pulls", split: "pull", category: "Shoulders", area: "Rear Delts", equip: "Cable Machine", cue: "Pull rope directly to eye level while externally rotating." },
+    { id: "s7", name: "Bent-Over Rear Delt Fly", split: "pull", category: "Shoulders", area: "Rear Delts", equip: "Dumbbells", cue: "Hinge torso flat; sweep arms wide." },
+
+    // --- BICEPS ---
+    { id: "bi1", name: "Incline Dumbbell Curl", split: "pull", category: "Biceps", area: "Long Head", equip: "Dumbbells (45°)", cue: "Elbows held behind torso to maximize long head stretch." },
+    { id: "bi2", name: "Bayesian Cable Curl", split: "pull", category: "Biceps", area: "Long Head", equip: "Cable Machine", cue: "Facing away from cable; constant stretch throughout." },
+    { id: "bi3", name: "Standing Barbell Curl", split: "pull", category: "Biceps", area: "Long Head", equip: "Straight / EZ Bar", cue: "Strict arm mechanics without hip momentum." },
+    { id: "bi4", name: "Preacher Curl", split: "pull", category: "Biceps", area: "Short Head", equip: "Preacher Bench", cue: "Arms forward on pad; peak tension at initial curl." },
+    { id: "bi5", name: "Spider Curl", split: "pull", category: "Biceps", area: "Short Head", cue: "Chest against incline; elbows hang vertical." },
+    { id: "bi6", name: "Dumbbell Hammer Curls", split: "pull", category: "Biceps", area: "Brachialis", equip: "Dumbbells", cue: "Neutral grip; thickens the upper forearm and outer arm." },
+    { id: "bi7", name: "Reverse Grip Barbell Curl", split: "pull", category: "Biceps", area: "Brachioradialis", equip: "Barbell", cue: "Overhand grip to bias forearm musculature." },
+
+    // --- TRICEPS ---
+    { id: "t1", name: "Overhead Triceps Extension", split: "push", category: "Triceps", area: "Long Head", equip: "Cable / Dumbbell", cue: "Elbows overhead to place the long head into full stretch." },
+    { id: "t2", name: "Skull Crushers", split: "push", category: "Triceps", area: "Long Head", equip: "EZ Bar", cue: "Lower bar toward crown of head; extend strictly at elbows." },
+    { id: "t3", name: "Triceps Rope Pushdown", split: "push", category: "Triceps", area: "Lateral Head", equip: "Cable Machine", cue: "Flare ends of rope apart at full lockout." },
+    { id: "t4", name: "Close-Grip Bench Press", split: "push", category: "Triceps", area: "Lateral Head", equip: "Barbell", cue: "Hands shoulder-width apart; press using triceps drive." },
+    { id: "t5", name: "Reverse-Grip Pushdown", split: "push", category: "Triceps", area: "Medial Head", equip: "Cable Machine", cue: "Supinated grip for locked-out medial head contraction." },
+    { id: "t6", name: "Diamond Push-ups", split: "push", category: "Triceps", area: "Medial Head", equip: "Bodyweight", cue: "Hands touching together below sternum." },
+
+    // --- LEGS ---
+    { id: "l1", name: "Barbell Back Squats", split: "legs", category: "Legs", area: "Quads & Glutes", equip: "Barbell / Rack", cue: "Squat below parallel; drive up through whole foot." },
+    { id: "l2", name: "Leg Press", split: "legs", category: "Legs", area: "Quads", equip: "Sled Machine", cue: "Feet mid-plate; deep knee flexion without pelvic tuck." },
+    { id: "l3", name: "Bulgarian Split Squats", split: "legs", category: "Legs", area: "Quads & Glutes", equip: "Dumbbells", cue: "Rear foot elevated on bench; torso forward for glutes, upright for quads." },
+    { id: "l4", name: "Leg Extensions", split: "legs", category: "Legs", area: "Quads (Isolation)", equip: "Machine", cue: "Pause at full knee extension for peak rectus femoris load." },
+    { id: "l5", name: "Romanian Deadlift (RDL)", split: "legs", category: "Legs", area: "Hamstrings", equip: "Barbell / DBs", cue: "Push hips back; stop when hamstrings hit max stretch." },
+    { id: "l6", name: "Seated Leg Curls", split: "legs", category: "Legs", area: "Hamstrings", equip: "Machine", cue: "Dorsiflex toes; smooth eccentric return." },
+    { id: "l7", name: "Barbell Hip Thrusts", split: "legs", category: "Legs", area: "Glutes", equip: "Barbell & Bench", cue: "Upper back fixed on bench; full hip extension lockout." },
+    { id: "l8", name: "Adductor Machine", split: "legs", category: "Legs", area: "Adductors", equip: "Machine", cue: "Squeeze knees together to target inner thigh muscles." },
+    { id: "l9", name: "Abductor Machine", split: "legs", category: "Legs", area: "Abductors", equip: "Machine", cue: "Drive knees outward to isolate gluteus medius." },
+    { id: "l10", name: "Standing Calf Raises", split: "legs", category: "Legs", area: "Calves (Gastrocnemius)", equip: "Smith / Machine", cue: "Full stretch at bottom; push through big toes." },
+    { id: "l11", name: "Seated Calf Raises", split: "legs", category: "Legs", area: "Calves (Soleus)", equip: "Machine", cue: "Bent knees isolate soleus muscle fiber." },
+
+    // --- ABS / CORE ---
+    { id: "a1", name: "Cable Crunches", split: "push", category: "Abs / Core", area: "Upper Abs", equip: "Cable Machine", cue: "Spinal flexion: curl ribs down toward pelvis, don't bend at hips." },
+    { id: "a2", name: "Decline Bench Crunches", split: "push", category: "Abs / Core", area: "Upper Abs", equip: "Decline Bench", cue: "Curl torso upward against gravity." },
+    { id: "a3", name: "Hanging Leg / Knee Raises", split: "pull", category: "Abs / Core", area: "Lower Abs", equip: "Pull-up Bar", cue: "Posterior pelvic tilt: curl pelvis up toward chest." },
+    { id: "a4", name: "Lying Leg Raises", split: "pull", category: "Abs / Core", area: "Lower Abs", equip: "Mat", cue: "Press lower back firmly into the floor throughout." },
+    { id: "a5", name: "Russian Twists", split: "pull", category: "Abs / Core", area: "Obliques", equip: "Plate / Med Ball", cue: "Controlled trunk rotation under active tension." },
+    { id: "a6", name: "Cable Woodchoppers", split: "push", category: "Abs / Core", area: "Obliques", equip: "Cable Machine", cue: "Rotational power from the torso." },
+    { id: "a7", name: "Ab Wheel Rollouts", split: "push", category: "Abs / Core", area: "Core Stability", equip: "Ab Wheel", cue: "Maintain posterior pelvic tilt; don't let lower back sag." },
+    { id: "a8", name: "Standard Plank", split: "legs", category: "Abs / Core", area: "Core Stability", equip: "Mat", cue: "Static isometric anti-extension hold." }
   ];
 
-  // Global State
+  // State Management
   let activeSession = null;
   let sessionTimer = null;
   let restTimerInterval = null;
   let restTimeLeft = 90;
   let restTimerActive = false;
 
-  // Primary Containers
+  // View Containers
   const landingPage = document.getElementById("landing-page");
   const appWorkspace = document.getElementById("app-workspace");
   const subviews = document.querySelectorAll(".subview");
   const sideLinks = document.querySelectorAll(".side-link");
   const toastCont = document.getElementById("toast-container");
 
-  // Notifications
   function toast(message) {
     const el = document.createElement("div");
     el.className = "toast";
@@ -48,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2800);
   }
 
-  // --- 1. PERSISTENCE & REALISTIC SEED GENERATOR ---
+  // --- 1. PERSISTENCE & DATA SEEDING ---
   function getWorkouts() {
     return JSON.parse(localStorage.getItem("gymrat_history") || "[]");
   }
@@ -71,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("gymrat_user_profile", JSON.stringify(prof));
   }
 
-  // Seed sample data on first run
   function seedInitialDataIfEmpty() {
     const current = getWorkouts();
     if (current.length === 0) {
@@ -80,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const initialLogs = [
         {
           id: "w-seed-1",
-          name: "Push Hypertrophy Day",
+          name: "Push Hypertrophy Session",
           split: "push",
           timestamp: now - (oneDay * 8),
           duration: 55,
@@ -88,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
           totalSets: 12,
           exercises: [
             {
-              name: "Barbell Bench Press",
+              name: "Flat Barbell Bench Press",
               sets: [
                 { setNum: 1, weight: 60, reps: 10 },
                 { setNum: 2, weight: 65, reps: 8 },
@@ -96,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ]
             },
             {
-              name: "Incline DB Press",
+              name: "Incline Dumbbell Press",
               sets: [
                 { setNum: 1, weight: 22, reps: 10 },
                 { setNum: 2, weight: 24, reps: 8 }
@@ -106,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         {
           id: "w-seed-2",
-          name: "Pull Hypertrophy Day",
+          name: "Pull Hypertrophy Session",
           split: "pull",
           timestamp: now - (oneDay * 5),
           duration: 60,
@@ -121,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ]
             },
             {
-              name: "Lat Pulldown",
+              name: "Lat Pulldown (Wide Grip)",
               sets: [
                 { setNum: 1, weight: 55, reps: 10 },
                 { setNum: 2, weight: 60, reps: 8 }
@@ -131,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         {
           id: "w-seed-3",
-          name: "Push Overload Day",
+          name: "Push Overload Session",
           split: "push",
           timestamp: now - (oneDay * 2),
           duration: 58,
@@ -139,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
           totalSets: 12,
           exercises: [
             {
-              name: "Barbell Bench Press",
+              name: "Flat Barbell Bench Press",
               sets: [
                 { setNum: 1, weight: 65, reps: 10 },
                 { setNum: 2, weight: 70, reps: 8 },
@@ -184,11 +238,26 @@ document.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Event Listeners for Nav
+  // Welcome Screen actions
   document.getElementById("landing-start-btn").addEventListener("click", enterAppWorkspace);
-  document.getElementById("landing-login-btn").addEventListener("click", enterAppWorkspace);
-  document.getElementById("hero-get-started-btn").addEventListener("click", enterAppWorkspace);
-  document.getElementById("hero-demo-btn").addEventListener("click", enterAppWorkspace);
+  document.getElementById("landing-login-btn").addEventListener("click", () => {
+    document.getElementById("login-modal").style.display = "flex";
+  });
+  document.getElementById("login-modal-close").addEventListener("click", () => {
+    document.getElementById("login-modal").style.display = "none";
+  });
+  document.getElementById("login-quick-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const val = document.getElementById("quick-login-name").value.trim();
+    if (val) {
+      const prof = getProfile();
+      prof.name = val;
+      saveProfile(prof);
+      document.getElementById("login-modal").style.display = "none";
+      enterAppWorkspace();
+    }
+  });
+
   document.getElementById("brand-home-link").addEventListener("click", () => switchSubView("view-dashboard"));
   document.getElementById("sidebar-logout-btn").addEventListener("click", enterLandingPage);
   document.getElementById("topbar-quick-workout-btn").addEventListener("click", () => {
@@ -200,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
     link.addEventListener("click", () => switchSubView(link.dataset.target));
   });
 
-  // --- 3. PROGRESSION INSIGHTS CALCULATION ENGINE ---
+  // --- 3. PROGRESSION INSIGHTS ENGINE ---
   function computeProgressionInsights(workouts) {
     const insights = [];
     if (workouts.length < 2) {
@@ -208,16 +277,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return insights;
     }
 
-    // Benchmark Bench Press
-    const benchPressSessions = workouts
-      .filter(w => w.exercises.some(e => e.name === "Barbell Bench Press"))
+    const benchSessions = workouts
+      .filter(w => w.exercises.some(e => e.name === "Flat Barbell Bench Press"))
       .sort((a, b) => a.timestamp - b.timestamp);
 
-    if (benchPressSessions.length >= 2) {
-      const first = benchPressSessions[0];
-      const latest = benchPressSessions[benchPressSessions.length - 1];
-      const firstMax = Math.max(...first.exercises.find(e => e.name === "Barbell Bench Press").sets.map(s => s.weight));
-      const latestMax = Math.max(...latest.exercises.find(e => e.name === "Barbell Bench Press").sets.map(s => s.weight));
+    if (benchSessions.length >= 2) {
+      const first = benchSessions[0];
+      const latest = benchSessions[benchSessions.length - 1];
+      const firstMax = Math.max(...first.exercises.find(e => e.name === "Flat Barbell Bench Press").sets.map(s => s.weight));
+      const latestMax = Math.max(...latest.exercises.find(e => e.name === "Flat Barbell Bench Press").sets.map(s => s.weight));
 
       if (latestMax > firstMax) {
         const gain = Math.round(((latestMax - firstMax) / firstMax) * 100);
@@ -227,7 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Muscle Group Compliance
     const oneWeekAgo = Date.now() - (7 * 86400000);
     const recentWorkouts = workouts.filter(w => w.timestamp >= oneWeekAgo);
     const hasLegs = recentWorkouts.some(w => w.split === "legs");
@@ -238,7 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
       insights.push("Equilibrium maintained: Upper and lower splits logged evenly this week.");
     }
 
-    // Frequency Compliance
     const thisMonthWorkouts = workouts.filter(w => new Date(w.timestamp).getMonth() === new Date().getMonth()).length;
     insights.push(`Active cadence: You have completed ${thisMonthWorkouts} total training sessions this calendar month.`);
 
@@ -252,21 +318,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const now = Date.now();
     const oneWeekAgo = now - (7 * 86400000);
 
-    // Weekly Volume
     const weeklyWorkouts = workouts.filter(w => w.timestamp >= oneWeekAgo);
     const weeklyVol = weeklyWorkouts.reduce((sum, w) => sum + (w.totalVolume || 0), 0);
     document.getElementById("dash-weekly-vol").innerHTML = `${weeklyVol.toLocaleString()} <small>kg</small>`;
 
-    // Total Workouts & Month Workouts
     document.getElementById("dash-total-workouts").textContent = workouts.length;
     const thisMonth = workouts.filter(w => new Date(w.timestamp).getMonth() === new Date().getMonth()).length;
     document.getElementById("dash-workouts-month").textContent = `${thisMonth} completed this month`;
 
-    // Unique Workout Days Streak
     const datesTrained = new Set(workouts.map(w => new Date(w.timestamp).toDateString()));
     document.getElementById("dash-streak").innerHTML = `${datesTrained.size} <small>days</small>`;
 
-    // Calculated PRs
     const prMap = {};
     workouts.forEach(w => {
       w.exercises.forEach(ex => {
@@ -279,14 +341,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById("dash-pr-count").textContent = Object.keys(prMap).length;
 
-    // Compliance Goal
     const goalTarget = profile.targetWorkouts || 5;
     const workoutsDoneThisWeek = weeklyWorkouts.length;
     document.getElementById("dash-goal-compliance").textContent = `${workoutsDoneThisWeek}/${goalTarget}`;
     const goalPct = Math.min(100, Math.round((workoutsDoneThisWeek / goalTarget) * 100));
     document.getElementById("dash-goal-bar").style.width = `${goalPct}%`;
 
-    // Insights Stack
     const insightsContainer = document.getElementById("insights-container");
     insightsContainer.innerHTML = "";
     const activeInsights = computeProgressionInsights(workouts);
@@ -297,7 +357,6 @@ document.addEventListener("DOMContentLoaded", () => {
       insightsContainer.appendChild(d);
     });
 
-    // 7-Day Heatmap Bars
     const heatContainer = document.getElementById("dashboard-heatmap-bars");
     heatContainer.innerHTML = "";
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -321,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- 5. WORKOUT LOGGER & REAL-TIME STATE ---
+  // --- 5. WORKOUT LOGGER ---
   const splitOptions = document.querySelectorAll(".split-opt");
   splitOptions.forEach(opt => {
     opt.addEventListener("click", () => {
@@ -341,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
     EXERCISE_CATALOG.filter(e => e.split === split).forEach(ex => {
       const opt = document.createElement("option");
       opt.value = ex.name;
-      opt.textContent = `${ex.name} (${ex.category})`;
+      opt.textContent = `${ex.name} (${ex.area})`;
       dropdown.appendChild(opt);
     });
   }
@@ -359,12 +418,10 @@ document.addEventListener("DOMContentLoaded", () => {
     splitOptions.forEach(o => o.classList.toggle("active", o.dataset.split === split));
     populateLoggerExerciseDropdown(split);
 
-    // Initial Exercises
     document.getElementById("logger-exercises-list").innerHTML = "";
     const defaults = EXERCISE_CATALOG.filter(e => e.split === split).slice(0, 2);
     defaults.forEach(ex => addExerciseToLogger(ex.name));
 
-    // Reset Stopwatch
     clearInterval(sessionTimer);
     sessionTimer = setInterval(() => {
       const sec = Math.floor((Date.now() - activeSession.startTime) / 1000);
@@ -449,7 +506,6 @@ document.addEventListener("DOMContentLoaded", () => {
     recalculateLiveLoggerTotals();
   }
 
-  // Delegated dynamic button events
   document.getElementById("logger-exercises-list").addEventListener("click", (e) => {
     if (e.target.classList.contains("btn-add-set-row")) {
       const exId = e.target.dataset.target;
@@ -480,7 +536,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("logger-live-sets").textContent = totSets;
   }
 
-  // Discard & Finish Handlers
   document.getElementById("logger-cancel-btn").addEventListener("click", () => {
     if (confirm("Discard this active workout session?")) {
       clearInterval(sessionTimer);
@@ -534,13 +589,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const presetPills = document.querySelectorAll(".preset-pill");
   presetPills.forEach(pill => {
     pill.addEventListener("click", () => {
-      presetPills.forEach(p => p.classList.remove("active"));
-      pill.classList.add("active");
-      restTimeLeft = parseInt(pill.dataset.seconds);
-      updateRestTimerDisplay();
-      if (restTimerActive) {
-        clearInterval(restTimerInterval);
-        startRestCountdown();
+      if (pill.parentElement.classList.contains("preset-pills")) {
+        presetPills.forEach(p => {
+          if (p.parentElement.classList.contains("preset-pills")) p.classList.remove("active");
+        });
+        pill.classList.add("active");
+        restTimeLeft = parseInt(pill.dataset.seconds);
+        updateRestTimerDisplay();
+        if (restTimerActive) {
+          clearInterval(restTimerInterval);
+          startRestCountdown();
+        }
       }
     });
   });
@@ -562,7 +621,7 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(restTimerInterval);
         restTimerActive = false;
         document.getElementById("rest-timer-toggle").textContent = "Start";
-        toast("Rest complete! Begin next set.");
+        toast("Rest complete! Begin your next working set.");
       }
     }, 1000);
   }
@@ -581,7 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(restTimerInterval);
     restTimerActive = false;
     document.getElementById("rest-timer-toggle").textContent = "Start";
-    const activePill = document.querySelector(".preset-pill.active");
+    const activePill = document.querySelector(".preset-pills .preset-pill.active");
     restTimeLeft = activePill ? parseInt(activePill.dataset.seconds) : 90;
     updateRestTimerDisplay();
   });
@@ -620,7 +679,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("history-filter-select").addEventListener("change", renderHistoryTable);
 
-  // History table delegation (View Modal & Delete)
   document.getElementById("history-tbody").addEventListener("click", (e) => {
     const wid = e.target.dataset.id;
     if (!wid) return;
@@ -673,7 +731,7 @@ document.addEventListener("DOMContentLoaded", () => {
     EXERCISE_CATALOG.forEach(ex => {
       const opt = document.createElement("option");
       opt.value = ex.name;
-      opt.textContent = ex.name;
+      opt.textContent = `${ex.name} (${ex.category})`;
       picker.appendChild(opt);
     });
 
@@ -699,7 +757,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Populate Analytics Header Strip
     if (dataPoints.length > 0) {
       const allWeights = dataPoints.map(d => d.weight);
       document.getElementById("an-top-pr").textContent = `${Math.max(...allWeights)} kg`;
@@ -712,7 +769,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("an-avg-weight").textContent = "0 kg";
     }
 
-    // Native Canvas Line Chart Renderer
     const canvas = document.getElementById("progression-canvas");
     const ctx = canvas.getContext("2d");
     const dpr = window.devicePixelRatio || 1;
@@ -738,7 +794,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const maxVal = Math.max(...dataPoints.map(d => d.weight)) * 1.15;
     const minVal = Math.max(0, Math.min(...dataPoints.map(d => d.weight)) * 0.85);
 
-    // Draw Subtle Horizontal Guides
     ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
     ctx.lineWidth = 1;
     for (let i = 0; i <= 4; i++) {
@@ -749,14 +804,12 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.stroke();
     }
 
-    // Compute Node Points
     const points = dataPoints.map((dp, i) => {
       const x = padding + ((w - padding * 2) * (i / Math.max(dataPoints.length - 1, 1)));
       const y = h - padding - (((dp.weight - minVal) / (maxVal - minVal || 1)) * (h - padding * 2));
       return { x, y, dp };
     });
 
-    // Draw Line
     ctx.strokeStyle = "#ff2b43";
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -766,7 +819,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     ctx.stroke();
 
-    // Draw Nodes and Labels
     points.forEach(pt => {
       ctx.fillStyle = "#ff2b43";
       ctx.beginPath();
@@ -782,7 +834,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- 9. EXERCISE LIBRARY ---
+  // --- 9. ADVANCED ANATOMY EXERCISE LIBRARY ---
   function renderLibraryGrid() {
     const grid = document.getElementById("library-cards-grid");
     const searchVal = document.getElementById("lib-search-input").value.toLowerCase();
@@ -790,7 +842,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     grid.innerHTML = "";
     const filtered = EXERCISE_CATALOG.filter(ex => {
-      const matchesSearch = ex.name.toLowerCase().includes(searchVal) || ex.category.toLowerCase().includes(searchVal);
+      const matchesSearch = ex.name.toLowerCase().includes(searchVal) ||
+                            ex.category.toLowerCase().includes(searchVal) ||
+                            ex.area.toLowerCase().includes(searchVal) ||
+                            ex.equip.toLowerCase().includes(searchVal);
       const matchesCat = activeFilter === "all" || ex.category === activeFilter;
       return matchesSearch && matchesCat;
     });
@@ -799,9 +854,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("div");
       card.className = "lib-card";
       card.innerHTML = `
-        <span class="lib-cat-tag">${ex.category} • ${ex.split}</span>
+        <div class="lib-badge-cluster">
+          <span class="lib-cat-tag">${ex.category} • ${ex.split}</span>
+          <span class="lib-area-tag">${ex.area}</span>
+        </div>
         <h4 class="lib-title">${ex.name}</h4>
         <p class="lib-meta">Equipment: <strong>${ex.equip}</strong></p>
+        <p class="lib-instructions">💡 <em>${ex.cue}</em></p>
       `;
       grid.appendChild(card);
     });
@@ -821,6 +880,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const p = getProfile();
     document.getElementById("sidebar-name-display").textContent = p.name;
     document.getElementById("sidebar-avatar-thumb").textContent = p.name.charAt(0).toUpperCase();
+    document.getElementById("sidebar-role-display").textContent = p.division;
     document.getElementById("topbar-greeting").textContent = `Welcome Back, ${p.name}`;
   }
 

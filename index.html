@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GYMRAT | Progression Engine & Hypertrophy Analytics</title>
+  <title>GYMRAT | Hypertrophy Engine & Movement Anatomy</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body class="theme-dark">
 
@@ -15,56 +15,34 @@
   <div class="ambient-glow glow-bottom-right"></div>
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- ================= 1. PUBLIC LANDING PAGE ================= -->
+  <!-- ================= 1. MINIMAL AUTH/WELCOME SCREEN ================= -->
   <div id="landing-page" class="view-panel active-panel">
-    <header class="landing-header">
-      <div class="brand-cluster">
-        <div class="brand-badge">⚡</div>
-        <div>
-          <h1 class="brand-title">GYMRAT</h1>
-          <p class="brand-sub">HYPERTROPHY ENGINE</p>
-        </div>
+    <div class="welcome-container">
+      <div class="welcome-logo-badge">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
       </div>
-      <div class="landing-nav-actions">
-        <button class="btn btn-outline" id="landing-login-btn">Log In</button>
-        <button class="btn btn-crimson" id="landing-start-btn">Launch App →</button>
+
+      <h1 class="welcome-title">GYMRAT</h1>
+      <span class="welcome-tag">PROGRESSIVE OVERLOAD & HYPERTROPHY ENGINE</span>
+
+      <div class="welcome-proverb-box">
+        <p class="proverb-quote">“What gets measured, gets managed. Progressive overload is the only shortcut that works.”</p>
+        <span class="proverb-author">— Training Principle</span>
       </div>
-    </header>
 
-    <main class="landing-main">
-      <section class="landing-hero">
-        <div class="hero-badge">BUILT FOR PROGRESSIVE OVERLOAD</div>
-        <h2 class="hero-heading">Stop Guessing Your Strength Progression.</h2>
-        <p class="hero-desc">
-          Most fitness trackers fragment your data across scattered notes and generic calorie apps. GYMRAT brings set-by-set overload tracking, automated PR detection, and intelligent volume analytics under one glassmorphic roof.
-        </p>
-        <div class="hero-cta-cluster">
-          <button class="btn btn-crimson btn-lg" id="hero-get-started-btn">Get Started Free →</button>
-          <button class="btn btn-ghost btn-lg" id="hero-demo-btn">Explore Live Demo</button>
-        </div>
-      </section>
+      <div class="welcome-actions">
+        <button class="btn btn-crimson btn-welcome" id="landing-start-btn">Let's Start →</button>
+      </div>
 
-      <section class="landing-features">
-        <div class="feature-card">
-          <div class="feat-icon">⚡</div>
-          <h3>Rapid In-Chamber Logging</h3>
-          <p>No multi-page form traps. Log exercises, sets, weights, and reps in seconds with an integrated rest timer.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feat-icon">📈</div>
-          <h3>Automated PR Calculations</h3>
-          <p>Instantly extract your true 1-rep max estimates, highest loads, and volume records straight from actual logged sets.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feat-icon">🧠</div>
-          <h3>Progression Insights Engine</h3>
-          <p>Real mathematical observations detecting volume shifts, stall detection, and routine muscle balance alerts.</p>
-        </div>
-      </section>
-    </main>
+      <p class="welcome-sub-prompt">
+        Returning athlete? <button class="btn-text-link" id="landing-login-btn">Quick Login</button>
+      </p>
+    </div>
   </div>
 
-  <!-- ================= 2. AUTHENTICATED APP WORKSPACE ================= -->
+  <!-- ================= 2. AUTHENTICATED WORKSPACE ================= -->
   <div id="app-workspace" class="view-panel">
     <div class="app-layout">
       <!-- Sidebar Navigation -->
@@ -99,33 +77,31 @@
         </nav>
 
         <div class="sidebar-footer">
-          <div class="user-chip" id="sidebar-user-chip">
+          <div class="user-chip">
             <div class="user-avatar-small" id="sidebar-avatar-thumb">H</div>
             <div class="user-chip-meta">
               <span class="user-chip-name" id="sidebar-name-display">Harish</span>
-              <span class="user-chip-role">Gymrat Division</span>
+              <span class="user-chip-role" id="sidebar-role-display">Gymrat Division</span>
             </div>
           </div>
-          <button class="btn btn-ghost btn-sm" id="sidebar-logout-btn">Log Out</button>
+          <button class="btn btn-ghost btn-sm" id="sidebar-logout-btn">Exit App</button>
         </div>
       </aside>
 
-      <!-- View Chamber -->
-      <div class="workspace-main">
-        <!-- Top Workspace Bar -->
+      <!-- Main Chamber Container -->
+      <main class="workspace-main">
         <div class="workspace-topbar">
           <div class="topbar-welcome">
-            <h2 id="topbar-greeting">Welcome Back</h2>
-            <p class="topbar-date" id="topbar-date">Tuesday, September 29</p>
+            <h2 id="topbar-greeting">Welcome Back, Harish</h2>
+            <p class="topbar-date" id="topbar-date">Loading date...</p>
           </div>
           <div class="topbar-actions">
             <button class="btn btn-crimson" id="topbar-quick-workout-btn">+ New Workout</button>
           </div>
         </div>
 
-        <!-- 2.1 DASHBOARD VIEW -->
+        <!-- 2.1 DASHBOARD -->
         <section id="view-dashboard" class="subview active">
-          <!-- Overview Metric Grid -->
           <div class="stat-grid-top">
             <div class="stat-tile">
               <span class="stat-sub">TRAINING VOLUME (WEEK)</span>
@@ -149,18 +125,15 @@
             </div>
           </div>
 
-          <!-- Progression Insights & Weekly Goal Section -->
           <div class="dashboard-duo">
             <div class="panel-card flex-2">
               <div class="card-header-flex">
                 <div>
                   <h3 class="card-title">🧠 Progression Insights</h3>
-                  <p class="card-subtitle">Real-time mathematical analysis of your logs</p>
+                  <p class="card-subtitle">Real-time biomechanical analysis of your logged sets</p>
                 </div>
               </div>
-              <div class="insights-stack" id="insights-container">
-                <!-- Dynamically Populated Insights -->
-              </div>
+              <div class="insights-stack" id="insights-container"></div>
             </div>
 
             <div class="panel-card flex-1">
@@ -182,17 +155,14 @@
             </div>
           </div>
 
-          <!-- Weekly Activity Heatmap Bar -->
           <div class="panel-card" style="margin-top: 1.5rem;">
             <h3 class="card-title">7-Day Split Distribution</h3>
             <p class="card-subtitle">Daily training volume output</p>
-            <div class="chart-container-heatmap" id="dashboard-heatmap-bars">
-              <!-- Inline Canvas or Bar Elements -->
-            </div>
+            <div class="chart-container-heatmap" id="dashboard-heatmap-bars"></div>
           </div>
         </section>
 
-        <!-- 2.2 WORKOUT LOGGER VIEW -->
+        <!-- 2.2 WORKOUT LOGGER -->
         <section id="view-logger" class="subview">
           <div class="panel-card chamber-logger-card">
             <div class="logger-header">
@@ -235,10 +205,7 @@
               <button class="btn btn-crimson" id="logger-add-exercise-btn">+ Add Exercise</button>
             </div>
 
-            <!-- Dynamic Multi-Exercise Container -->
-            <div class="logger-exercises-container" id="logger-exercises-list">
-              <!-- Exercise Cards Added Dynamically -->
-            </div>
+            <div class="logger-exercises-container" id="logger-exercises-list"></div>
 
             <div class="logger-footer">
               <div class="logger-summary-pills">
@@ -253,7 +220,7 @@
           </div>
         </section>
 
-        <!-- 2.3 WORKOUT HISTORY VIEW -->
+        <!-- 2.3 WORKOUT HISTORY -->
         <section id="view-history" class="subview">
           <div class="panel-card">
             <div class="card-header-flex">
@@ -261,14 +228,12 @@
                 <h3 class="card-title">Completed Workouts</h3>
                 <p class="card-subtitle">Comprehensive training session archive</p>
               </div>
-              <div class="filter-group">
-                <select id="history-filter-select" class="text-input filter-select">
-                  <option value="all">All Splits</option>
-                  <option value="push">Push</option>
-                  <option value="pull">Pull</option>
-                  <option value="legs">Legs</option>
-                </select>
-              </div>
+              <select id="history-filter-select" class="text-input filter-select">
+                <option value="all">All Splits</option>
+                <option value="push">Push</option>
+                <option value="pull">Pull</option>
+                <option value="legs">Legs</option>
+              </select>
             </div>
 
             <div class="history-table-container">
@@ -290,15 +255,15 @@
           </div>
         </section>
 
-        <!-- 2.4 PROGRESSION ANALYTICS VIEW -->
+        <!-- 2.4 PROGRESSION ANALYTICS -->
         <section id="view-analytics" class="subview">
           <div class="panel-card">
             <div class="card-header-flex">
               <div>
                 <h3 class="card-title">Progression Visualizer</h3>
-                <p class="card-subtitle">Exercise volume and top working load over historical sessions</p>
+                <p class="card-subtitle">Top working load tracked across workout history</p>
               </div>
-              <select id="analytics-select-exercise" class="text-input select-styled" style="max-width:240px;"></select>
+              <select id="analytics-select-exercise" class="text-input select-styled" style="max-width:280px;"></select>
             </div>
 
             <div class="analytics-metrics-strip">
@@ -322,34 +287,37 @@
           </div>
         </section>
 
-        <!-- 2.5 EXERCISE LIBRARY VIEW -->
+        <!-- 2.5 COMPREHENSIVE EXERCISE LIBRARY -->
         <section id="view-library" class="subview">
           <div class="panel-card">
             <div class="card-header-flex">
               <div>
-                <h3 class="card-title">Exercise Movement Index</h3>
-                <p class="card-subtitle">Search exercises by target muscle group and movement mechanics</p>
+                <h3 class="card-title">Anatomy & Exercise Movement Index</h3>
+                <p class="card-subtitle">Complete biomechanical library organized by muscle group and anatomical target</p>
               </div>
-              <input type="text" id="lib-search-input" class="text-input" placeholder="Search exercises..." style="max-width:250px;" />
+              <input type="text" id="lib-search-input" class="text-input" placeholder="Search exercises, heads, equipment..." style="max-width:320px;" />
             </div>
 
+            <!-- Primary Muscle Group Filters -->
             <div class="pill-filter-row" id="lib-category-filters">
-              <button class="preset-pill active" data-category="all">All</button>
+              <button class="preset-pill active" data-category="all">All Muscles</button>
               <button class="preset-pill" data-category="Chest">Chest</button>
               <button class="preset-pill" data-category="Back">Back</button>
               <button class="preset-pill" data-category="Shoulders">Shoulders</button>
-              <button class="preset-pill" data-category="Arms">Arms</button>
+              <button class="preset-pill" data-category="Biceps">Biceps</button>
+              <button class="preset-pill" data-category="Triceps">Triceps</button>
               <button class="preset-pill" data-category="Legs">Legs</button>
+              <button class="preset-pill" data-category="Abs / Core">Abs / Core</button>
             </div>
 
             <div class="library-grid" id="library-cards-grid"></div>
           </div>
         </section>
 
-        <!-- 2.6 ATHLETE PROFILE VIEW -->
+        <!-- 2.6 ATHLETE PROFILE -->
         <section id="view-profile" class="subview">
           <div class="panel-card profile-settings-card">
-            <h3 class="card-title">Athlete Profile & Goals</h3>
+            <h3 class="card-title">Athlete Profile & Parameters</h3>
             <p class="card-subtitle">Maintain physical parameters and weekly overload targets</p>
 
             <form id="profile-form" class="profile-grid-form">
@@ -372,9 +340,9 @@
               <div class="form-group">
                 <label class="field-title">PRIMARY FOCUS</label>
                 <select id="prof-focus" class="text-input select-styled">
-                  <option value="Hypertrophy">Hypertrophy (Muscle Growth)</option>
-                  <option value="Strength">Absolute Strength (Powerlifting)</option>
-                  <option value="Endurance">General Conditioning</option>
+                  <option value="Hypertrophy">Hypertrophy (Progressive Overload)</option>
+                  <option value="Strength">Absolute Strength</option>
+                  <option value="Conditioning">Endurance & Conditioning</option>
                 </select>
               </div>
               <div class="form-group form-actions-full">
@@ -383,8 +351,25 @@
             </form>
           </div>
         </section>
+      </main>
+    </div>
+  </div>
 
+  <!-- Quick Login Modal -->
+  <div class="modal-overlay" id="login-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header-flex">
+        <h3 class="modal-title">Athlete Login</h3>
+        <button class="btn-close-modal" id="login-modal-close">✕</button>
       </div>
+      <p class="card-subtitle" style="margin-bottom: 1.25rem;">Enter athlete credentials to access your progression records.</p>
+      <form id="login-quick-form">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="field-title">ATHLETE NAME</label>
+          <input type="text" id="quick-login-name" class="text-input" placeholder="e.g. Harish" required />
+        </div>
+        <button type="submit" class="btn btn-crimson btn-block" style="width:100%;">Authenticate & Enter →</button>
+      </form>
     </div>
   </div>
 
