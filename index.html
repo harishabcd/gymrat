@@ -11,13 +11,15 @@
     <!-- 1. LOGIN PAGE -->
     <div id="landing-page" class="screen-container">
         <div class="auth-card">
-            <h1>GYMRAT</h1>
-            <p>Hypertrophy & Overload Engine</p>
+            <div class="brand-header">
+                <h1>GYMRAT</h1>
+                <p>HYPERTROPHY & OVERLOAD ENGINE</p>
+            </div>
             
             <div class="input-group">
-                <input type="email" id="email" placeholder="Email Address">
+                <input type="email" id="email" placeholder="Athlete Email Address">
                 <div class="password-wrapper">
-                    <input type="password" id="password" placeholder="Password">
+                    <input type="password" id="password" placeholder="Access Code (Password)">
                     <span id="toggle-password" class="eye-icon">👁️</span>
                 </div>
             </div>
@@ -26,8 +28,8 @@
             <p id="auth-success" class="success-text"></p>
             
             <div class="button-group">
-                <button type="button" id="btn-login" class="primary-btn">Sign In</button>
-                <button type="button" id="btn-signup" class="secondary-btn">Create Account</button>
+                <button type="button" id="btn-login" class="primary-btn">Authenticate & Enter →</button>
+                <button type="button" id="btn-signup" class="secondary-btn">Register New Athlete</button>
             </div>
         </div>
     </div>
@@ -37,64 +39,94 @@
         
         <!-- Navigation Menu -->
         <nav class="top-nav">
-            <div class="nav-brand">GYMRAT</div>
+            <div class="nav-brand">GYMRAT <span class="badge">PRO</span></div>
             <div class="nav-links">
                 <button type="button" id="nav-profile" class="nav-btn">Profile</button>
                 <button type="button" id="nav-tracker" class="nav-btn active">Tracker</button>
                 <button type="button" id="nav-library" class="nav-btn">Library</button>
-                <button type="button" id="nav-special" class="nav-btn">Special Feature</button>
+                <button type="button" id="nav-special" class="nav-btn">Engine</button>
                 <button type="button" id="btn-logout" class="nav-btn danger">Logout</button>
             </div>
         </nav>
 
-        <!-- View: Profile -->
+        <!-- View: Profile & Dashboard -->
         <div id="view-profile" class="app-section" style="display: none;">
-            <h2>Athlete Profile</h2>
-            <div class="card">
-                <p><strong>Division:</strong> Classic Physique</p>
-                <p><strong>Status:</strong> Active</p>
-                <!-- Future profile stats can go here -->
+            <div class="profile-header card">
+                <div class="avatar-circle">H</div>
+                <div class="profile-info">
+                    <span class="status-badge">● ACTIVE ATHLETE</span>
+                    <h2>HARISH <span class="division-text">/ CLASSIC PHYSIQUE</span></h2>
+                </div>
             </div>
-            <div class="card history-section">
-                <h3>Workout History & Growth</h3>
-                <ul id="history-list"></ul>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>TODAY'S VOLUME</h4>
+                    <h2>0 <span class="unit">kg</span></h2>
+                </div>
+                <div class="stat-card">
+                    <h4>SETS LOGGED</h4>
+                    <h2>0</h2>
+                </div>
+            </div>
+
+            <div class="card mt-20">
+                <h3>Workout History</h3>
+                <ul id="history-list" class="history-list"></ul>
             </div>
         </div>
 
         <!-- View: Workout Tracker -->
         <div id="view-tracker" class="app-section">
-            <h2>Workout Tracker</h2>
+            <div class="section-header">
+                <h2>Logging Chamber</h2>
+                <p>Select your split focus and log your progressive overload.</p>
+            </div>
+            
             <div class="card logger-card">
-                <label>Target Muscle Group:</label>
-                <select id="muscle-group-select">
-                    <option value="">-- Select Muscle --</option>
-                    <option value="Chest">Chest (Push)</option>
-                    <option value="Back">Back (Pull)</option>
-                    <option value="Legs">Legs (Lower)</option>
-                    <option value="Shoulders">Shoulders (Push)</option>
-                    <option value="Arms">Arms</option>
-                </select>
+                <div class="input-block">
+                    <label>Target Muscle Group</label>
+                    <select id="muscle-group-select" class="modern-select">
+                        <option value="">-- Select Target Area --</option>
+                        <option value="Chest">Chest (Push)</option>
+                        <option value="Back">Back (Pull)</option>
+                        <option value="Legs">Legs (Lower)</option>
+                        <option value="Shoulders">Shoulders (Push)</option>
+                        <option value="Arms">Arms</option>
+                    </select>
+                </div>
 
-                <label>Exercise:</label>
-                <select id="exercise-select" disabled>
-                    <option value="">-- Select Exercise --</option>
-                </select>
+                <div class="input-block">
+                    <label>Specific Exercise</label>
+                    <select id="exercise-select" class="modern-select" disabled>
+                        <option value="">-- Select Exercise --</option>
+                    </select>
+                </div>
 
                 <div class="metrics-grid">
-                    <input type="number" id="exercise-weight" placeholder="Weight (kg)">
-                    <input type="number" id="exercise-reps" placeholder="Reps">
+                    <div class="input-block">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="exercise-weight" placeholder="e.g. 60">
+                    </div>
+                    <div class="input-block">
+                        <label>Reps Completed</label>
+                        <input type="number" id="exercise-reps" placeholder="e.g. 10">
+                    </div>
                 </div>
                 
-                <button type="button" id="btn-save-workout" class="primary-btn mt-10">Log Set to Cloud</button>
-                <p id="save-status" class="success-text"></p>
+                <button type="button" id="btn-save-workout" class="primary-btn mt-20">Log Set to Cloud</button>
+                <p id="save-status" class="success-text center-text"></p>
             </div>
         </div>
 
         <!-- View: Exercise Library -->
         <div id="view-library" class="app-section" style="display: none;">
-            <h2>Exercise Library</h2>
+            <div class="section-header">
+                <h2>Anatomy & Library</h2>
+                <p>Search the database for form and mechanics.</p>
+            </div>
             <div class="card">
-                <input type="text" id="search-library" placeholder="Search exercises (e.g., Pullover, Rack Pulls)...">
+                <input type="text" id="search-library" class="search-bar" placeholder="Search exercises (e.g., Pullover, Squat)...">
                 <ul id="library-list" class="library-grid">
                     <!-- Populated by JS -->
                 </ul>
@@ -103,9 +135,13 @@
 
         <!-- View: Special Feature -->
         <div id="view-special" class="app-section" style="display: none;">
-            <h2>Special Feature</h2>
-            <div class="card">
-                <p>Welcome to the Hypertrophy Engine. (Feature coming soon).</p>
+            <div class="section-header">
+                <h2>Hypertrophy Engine</h2>
+                <p>Advanced Analytics & Weekly Overload Targets</p>
+            </div>
+            <div class="card center-text padding-40">
+                <h1 style="color: #ff2a5f; margin-bottom: 10px;">ENGINE READY</h1>
+                <p>Analytics algorithms will unlock after 7 days of logging data.</p>
             </div>
         </div>
 
