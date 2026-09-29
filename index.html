@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GYMRAT | Hypertrophy Engine & Movement Anatomy</title>
+  <title>GYMRAT | Hypertrophy Engine</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,9 +14,14 @@
   <div class="ambient-glow glow-top-left"></div>
   <div class="ambient-glow glow-bottom-right"></div>
   <div id="toast-container" class="toast-container"></div>
+  
+  <!-- Global Loading Spinner Overlay -->
+  <div id="global-loader" class="modal-overlay" style="display: flex; z-index: 3000;">
+    <div class="spinner"></div>
+  </div>
 
-  <!-- ================= 1. MINIMAL AUTH/WELCOME SCREEN ================= -->
-  <div id="landing-page" class="view-panel active-panel">
+  <!-- ================= 1. MINIMAL WELCOME SCREEN ================= -->
+  <div id="landing-page" class="view-panel">
     <div class="welcome-container">
       <div class="welcome-logo-badge">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -33,67 +38,61 @@
       </div>
 
       <div class="welcome-actions">
-        <button class="btn btn-crimson btn-welcome" id="landing-start-btn">Let's Start →</button>
+        <button class="btn btn-crimson btn-welcome" id="landing-start-btn">Authenticate & Enter →</button>
       </div>
-
-      <p class="welcome-sub-prompt">
-        Returning athlete? <button class="btn-text-link" id="landing-login-btn">Quick Login</button>
-      </p>
     </div>
   </div>
 
   <!-- ================= 2. AUTHENTICATED WORKSPACE ================= -->
   <div id="app-workspace" class="view-panel">
     <div class="app-layout">
+      
+      <!-- Mobile Overlay -->
+      <div id="mobile-sidebar-overlay" class="mobile-overlay"></div>
+
       <!-- Sidebar Navigation -->
-      <aside class="sidebar">
-        <div class="brand-cluster sidebar-brand" id="brand-home-link">
-          <div class="brand-badge">⚡</div>
-          <div>
-            <h1 class="brand-title">GYMRAT</h1>
-            <p class="brand-sub">PROGRESSION OS</p>
+      <aside class="sidebar" id="app-sidebar">
+        <div class="sidebar-header-row">
+          <div class="brand-cluster sidebar-brand" id="brand-home-link">
+            <div class="brand-badge">⚡</div>
+            <div>
+              <h1 class="brand-title">GYMRAT</h1>
+              <p class="brand-sub">PROGRESSION OS</p>
+            </div>
           </div>
+          <button class="mobile-close-btn" id="mobile-close-sidebar">✕</button>
         </div>
 
         <nav class="side-nav">
-          <button class="side-link active" data-target="view-dashboard">
-            <span class="icon">📊</span> Dashboard
-          </button>
-          <button class="side-link" data-target="view-logger">
-            <span class="icon">⚡</span> Workout Logger
-          </button>
-          <button class="side-link" data-target="view-history">
-            <span class="icon">🕒</span> Workout History
-          </button>
-          <button class="side-link" data-target="view-analytics">
-            <span class="icon">📈</span> Progression Analytics
-          </button>
-          <button class="side-link" data-target="view-library">
-            <span class="icon">📚</span> Exercise Library
-          </button>
-          <button class="side-link" data-target="view-profile">
-            <span class="icon">👤</span> Athlete Profile
-          </button>
+          <button class="side-link active" data-target="view-dashboard"><span class="icon">📊</span> Dashboard</button>
+          <button class="side-link" data-target="view-logger"><span class="icon">⚡</span> Workout Logger</button>
+          <button class="side-link" data-target="view-history"><span class="icon">🕒</span> Workout History</button>
+          <button class="side-link" data-target="view-analytics"><span class="icon">📈</span> Progression Analytics</button>
+          <button class="side-link" data-target="view-library"><span class="icon">📚</span> Exercise Library</button>
+          <button class="side-link" data-target="view-profile"><span class="icon">👤</span> Athlete Profile</button>
         </nav>
 
         <div class="sidebar-footer">
           <div class="user-chip">
-            <div class="user-avatar-small" id="sidebar-avatar-thumb">H</div>
+            <div class="user-avatar-small" id="sidebar-avatar-thumb">A</div>
             <div class="user-chip-meta">
-              <span class="user-chip-name" id="sidebar-name-display">Harish</span>
-              <span class="user-chip-role" id="sidebar-role-display">Gymrat Division</span>
+              <span class="user-chip-name" id="sidebar-name-display">Athlete</span>
+              <span class="user-chip-role" id="sidebar-role-display">Verified User</span>
             </div>
           </div>
-          <button class="btn btn-ghost btn-sm" id="sidebar-logout-btn">Exit App</button>
+          <button class="btn btn-ghost btn-sm" id="sidebar-logout-btn">Log Out</button>
         </div>
       </aside>
 
       <!-- Main Chamber Container -->
       <main class="workspace-main">
         <div class="workspace-topbar">
-          <div class="topbar-welcome">
-            <h2 id="topbar-greeting">Welcome Back, Harish</h2>
-            <p class="topbar-date" id="topbar-date">Loading date...</p>
+          <div class="topbar-welcome" style="display:flex; align-items:center; gap:12px;">
+            <button class="mobile-menu-btn" id="mobile-open-sidebar">☰</button>
+            <div>
+              <h2 id="topbar-greeting">Welcome Back</h2>
+              <p class="topbar-date" id="topbar-date">Loading date...</p>
+            </div>
           </div>
           <div class="topbar-actions">
             <button class="btn btn-crimson" id="topbar-quick-workout-btn">+ New Workout</button>
@@ -106,22 +105,18 @@
             <div class="stat-tile">
               <span class="stat-sub">TRAINING VOLUME (WEEK)</span>
               <h3 class="stat-num" id="dash-weekly-vol">0 <small>kg</small></h3>
-              <span class="stat-trend positive" id="dash-vol-trend">+0% vs prev week</span>
             </div>
             <div class="stat-tile">
               <span class="stat-sub">TOTAL WORKOUTS</span>
               <h3 class="stat-num" id="dash-total-workouts">0</h3>
-              <span class="stat-note" id="dash-workouts-month">0 completed this month</span>
             </div>
             <div class="stat-tile">
               <span class="stat-sub">ACTIVE STREAK</span>
               <h3 class="stat-num" id="dash-streak">0 <small>days</small></h3>
-              <span class="stat-note">Consistent training</span>
             </div>
             <div class="stat-tile">
               <span class="stat-sub">VERIFIED PRS</span>
               <h3 class="stat-num" id="dash-pr-count">0</h3>
-              <span class="stat-note">Lifetime personal bests</span>
             </div>
           </div>
 
@@ -154,12 +149,6 @@
               </div>
             </div>
           </div>
-
-          <div class="panel-card" style="margin-top: 1.5rem;">
-            <h3 class="card-title">7-Day Split Distribution</h3>
-            <p class="card-subtitle">Daily training volume output</p>
-            <div class="chart-container-heatmap" id="dashboard-heatmap-bars"></div>
-          </div>
         </section>
 
         <!-- 2.2 WORKOUT LOGGER -->
@@ -180,7 +169,6 @@
               </div>
             </div>
 
-            <!-- Integrated Rest Timer -->
             <div class="rest-timer-widget">
               <div class="timer-display-group">
                 <span class="timer-label">REST TIMER:</span>
@@ -191,7 +179,6 @@
                 <button class="preset-pill" data-seconds="60">60s</button>
                 <button class="preset-pill active" data-seconds="90">90s</button>
                 <button class="preset-pill" data-seconds="120">120s</button>
-                <button class="preset-pill" data-seconds="180">180s</button>
               </div>
               <div class="timer-controls">
                 <button class="btn btn-sm btn-outline" id="rest-timer-toggle">Start</button>
@@ -199,7 +186,6 @@
               </div>
             </div>
 
-            <!-- Add Exercise Row -->
             <div class="add-exercise-bar">
               <select id="logger-exercise-dropdown" class="text-input select-styled"></select>
               <button class="btn btn-crimson" id="logger-add-exercise-btn">+ Add Exercise</button>
@@ -214,7 +200,7 @@
               </div>
               <div class="logger-action-btns">
                 <button class="btn btn-ghost" id="logger-cancel-btn">Discard</button>
-                <button class="btn btn-crimson" id="logger-finish-btn">Complete & Save Workout</button>
+                <button class="btn btn-crimson" id="logger-finish-btn">Save to Cloud</button>
               </div>
             </div>
           </div>
@@ -228,27 +214,10 @@
                 <h3 class="card-title">Completed Workouts</h3>
                 <p class="card-subtitle">Comprehensive training session archive</p>
               </div>
-              <select id="history-filter-select" class="text-input filter-select">
-                <option value="all">All Splits</option>
-                <option value="push">Push</option>
-                <option value="pull">Pull</option>
-                <option value="legs">Legs</option>
-              </select>
             </div>
-
             <div class="history-table-container">
-              <table class="data-table" id="history-table">
-                <thead>
-                  <tr>
-                    <th>DATE</th>
-                    <th>ROUTINE</th>
-                    <th>DURATION</th>
-                    <th>VOLUME</th>
-                    <th>SETS</th>
-                    <th>EXERCISES</th>
-                    <th>ACTIONS</th>
-                  </tr>
-                </thead>
+              <table class="data-table">
+                <thead><tr><th>DATE</th><th>ROUTINE</th><th>DURATION</th><th>VOLUME</th><th>SETS</th><th>ACTIONS</th></tr></thead>
                 <tbody id="history-tbody"></tbody>
               </table>
             </div>
@@ -261,55 +230,37 @@
             <div class="card-header-flex">
               <div>
                 <h3 class="card-title">Progression Visualizer</h3>
-                <p class="card-subtitle">Top working load tracked across workout history</p>
+                <p class="card-subtitle">Top working load tracked across cloud history</p>
               </div>
               <select id="analytics-select-exercise" class="text-input select-styled" style="max-width:280px;"></select>
             </div>
-
             <div class="analytics-metrics-strip">
-              <div class="stat-tile mini">
-                <span class="stat-sub">EXERCISE PR</span>
-                <h4 id="an-top-pr">0 kg</h4>
-              </div>
-              <div class="stat-tile mini">
-                <span class="stat-sub">SESSIONS LOGGED</span>
-                <h4 id="an-total-sessions">0</h4>
-              </div>
-              <div class="stat-tile mini">
-                <span class="stat-sub">AVG WORKING WEIGHT</span>
-                <h4 id="an-avg-weight">0 kg</h4>
-              </div>
+              <div class="stat-tile mini"><span class="stat-sub">EXERCISE PR</span><h4 id="an-top-pr">0 kg</h4></div>
+              <div class="stat-tile mini"><span class="stat-sub">SESSIONS</span><h4 id="an-total-sessions">0</h4></div>
+              <div class="stat-tile mini"><span class="stat-sub">AVG LOAD</span><h4 id="an-avg-weight">0 kg</h4></div>
             </div>
-
             <div class="canvas-chart-wrapper">
               <canvas id="progression-canvas" height="280"></canvas>
             </div>
           </div>
         </section>
 
-        <!-- 2.5 COMPREHENSIVE EXERCISE LIBRARY -->
+        <!-- 2.5 EXERCISE LIBRARY -->
         <section id="view-library" class="subview">
           <div class="panel-card">
             <div class="card-header-flex">
               <div>
-                <h3 class="card-title">Anatomy & Exercise Movement Index</h3>
-                <p class="card-subtitle">Complete biomechanical library organized by muscle group and anatomical target</p>
+                <h3 class="card-title">Anatomy & Exercise Index</h3>
               </div>
-              <input type="text" id="lib-search-input" class="text-input" placeholder="Search exercises, heads, equipment..." style="max-width:320px;" />
+              <input type="text" id="lib-search-input" class="text-input" placeholder="Search exercises..." style="max-width:320px;" />
             </div>
-
-            <!-- Primary Muscle Group Filters -->
             <div class="pill-filter-row" id="lib-category-filters">
-              <button class="preset-pill active" data-category="all">All Muscles</button>
+              <button class="preset-pill active" data-category="all">All</button>
               <button class="preset-pill" data-category="Chest">Chest</button>
               <button class="preset-pill" data-category="Back">Back</button>
               <button class="preset-pill" data-category="Shoulders">Shoulders</button>
-              <button class="preset-pill" data-category="Biceps">Biceps</button>
-              <button class="preset-pill" data-category="Triceps">Triceps</button>
               <button class="preset-pill" data-category="Legs">Legs</button>
-              <button class="preset-pill" data-category="Abs / Core">Abs / Core</button>
             </div>
-
             <div class="library-grid" id="library-cards-grid"></div>
           </div>
         </section>
@@ -317,33 +268,15 @@
         <!-- 2.6 ATHLETE PROFILE -->
         <section id="view-profile" class="subview">
           <div class="panel-card profile-settings-card">
-            <h3 class="card-title">Athlete Profile & Parameters</h3>
-            <p class="card-subtitle">Maintain physical parameters and weekly overload targets</p>
-
+            <h3 class="card-title">Cloud Account Details</h3>
+            <div style="margin-top:1rem; margin-bottom:2rem;">
+              <p style="color:var(--text-dim); font-size:0.85rem;">Registered Email:</p>
+              <h4 id="profile-email-display" style="color:var(--accent-crimson); font-size:1.1rem;">-</h4>
+            </div>
             <form id="profile-form" class="profile-grid-form">
               <div class="form-group">
                 <label class="field-title">ATHLETE NAME</label>
                 <input type="text" id="prof-name" class="text-input" required />
-              </div>
-              <div class="form-group">
-                <label class="field-title">TRAINING DIVISION</label>
-                <input type="text" id="prof-division" class="text-input" required />
-              </div>
-              <div class="form-group">
-                <label class="field-title">BODYWEIGHT (KG)</label>
-                <input type="number" id="prof-weight" class="text-input" step="0.5" required />
-              </div>
-              <div class="form-group">
-                <label class="field-title">WEEKLY WORKOUT TARGET</label>
-                <input type="number" id="prof-target-workouts" class="text-input" min="1" max="7" required />
-              </div>
-              <div class="form-group">
-                <label class="field-title">PRIMARY FOCUS</label>
-                <select id="prof-focus" class="text-input select-styled">
-                  <option value="Hypertrophy">Hypertrophy (Progressive Overload)</option>
-                  <option value="Strength">Absolute Strength</option>
-                  <option value="Conditioning">Endurance & Conditioning</option>
-                </select>
               </div>
               <div class="form-group form-actions-full">
                 <button type="submit" class="btn btn-crimson">Save Profile Parameters</button>
@@ -351,29 +284,43 @@
             </form>
           </div>
         </section>
+
       </main>
     </div>
   </div>
 
-  <!-- Quick Login Modal -->
-  <div class="modal-overlay" id="login-modal" style="display:none;">
+  <!-- Firebase Auth Modal (Login / Register) -->
+  <div class="modal-overlay" id="auth-modal" style="display:none;">
     <div class="modal-card">
       <div class="modal-header-flex">
-        <h3 class="modal-title">Athlete Login</h3>
-        <button class="btn-close-modal" id="login-modal-close">✕</button>
+        <h3 class="modal-title" id="auth-modal-title">Athlete Login</h3>
+        <button class="btn-close-modal" id="auth-modal-close">✕</button>
       </div>
-      <p class="card-subtitle" style="margin-bottom: 1.25rem;">Enter athlete credentials to access your progression records.</p>
-      <form id="login-quick-form">
-        <div class="form-group" style="margin-bottom: 1rem;">
+      
+      <div class="auth-tabs" style="display:flex; gap:10px; margin-bottom:1.5rem;">
+        <button class="preset-pill active" id="tab-login" style="flex:1;">Sign In</button>
+        <button class="preset-pill" id="tab-register" style="flex:1;">Create Account</button>
+      </div>
+
+      <form id="auth-form">
+        <div class="form-group" style="margin-bottom: 1rem;" id="auth-name-group">
           <label class="field-title">ATHLETE NAME</label>
-          <input type="text" id="quick-login-name" class="text-input" placeholder="e.g. Harish" required />
+          <input type="text" id="auth-name" class="text-input" placeholder="e.g. Harish" />
         </div>
-        <button type="submit" class="btn btn-crimson btn-block" style="width:100%;">Authenticate & Enter →</button>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="field-title">EMAIL ADDRESS</label>
+          <input type="email" id="auth-email" class="text-input" placeholder="athlete@example.com" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="field-title">PASSWORD</label>
+          <input type="password" id="auth-password" class="text-input" placeholder="••••••••" required minlength="6"/>
+        </div>
+        <button type="submit" class="btn btn-crimson btn-block" style="width:100%;" id="auth-submit-btn">Sign In to Cloud</button>
       </form>
+      <div id="auth-error-msg" style="color:var(--accent-crimson); font-size:0.8rem; margin-top:10px; text-align:center;"></div>
     </div>
   </div>
 
-  <!-- Detail Modal -->
   <div class="modal-overlay" id="detail-modal" style="display:none;">
     <div class="modal-card">
       <div class="modal-header-flex">
@@ -384,6 +331,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
