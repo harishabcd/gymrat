@@ -1,275 +1,222 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Elements
-  const avatarContainer = document.getElementById("avatar-container");
-  const fileInput = document.getElementById("profile-photo-input");
-  const profileImg = document.getElementById("user-profile-img");
-  
-  const heroUserName = document.getElementById("hero-user-name");
-  const heroUserDivision = document.getElementById("hero-user-division");
-  const heroTodayVol = document.getElementById("hero-today-volume");
-  const heroSetsLogged = document.getElementById("hero-sets-logged");
-  const heroWorkoutsDone = document.getElementById("hero-workouts-done");
-  const progressMetricText = document.getElementById("progress-metric-text");
-  const weeklyProgressFill = document.getElementById("weekly-progress-fill");
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-  const viewWorkout = document.getElementById("view-workout");
-  const viewLogging = document.getElementById("view-logging");
-  const sessionNameHeader = document.getElementById("active-session-name");
-  const backBtn = document.getElementById("back-to-hub-btn");
-  const finishBtn = document.getElementById("finish-session-btn");
-  const exerciseSelect = document.getElementById("exercise-select");
-  const saveSetBtn = document.getElementById("save-set-btn");
-  const inputWeight = document.getElementById("input-weight");
-  const inputReps = document.getElementById("input-reps");
-  const sessionLogTbody = document.getElementById("session-log-tbody");
+// ==========================================
+// 1. YOUR REAL FIREBASE CONFIG (DO NOT CHANGE)
+// ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDMcZEWAepTtKiIucdKmXUi2euT29XPBFM",
+  authDomain: "fir-71583.firebaseapp.com",
+  projectId: "fir-71583",
+  storageBucket: "fir-71583.firebasestorage.app",
+  messagingSenderId: "131866556311",
+  appId: "1:131866556311:web:7ceea259d54cde071df6d2",
+  measurementId: "G-30YD13LH3Q"
+};
 
-  // Auth elements
-  const authActionBtn = document.getElementById("auth-action-btn");
-  const authBtnText = document.getElementById("auth-btn-text");
-  const loginModal = document.getElementById("login-modal");
-  const loginForm = document.getElementById("login-form");
-  const loginUsername = document.getElementById("login-username");
-  const loginDivision = document.getElementById("login-division");
-  const navDateDisplay = document.getElementById("nav-date-display");
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  // Dynamic Date Display
-  if (navDateDisplay) {
-    const today = new Date();
-    const options = { weekday: 'short', month: 'short', day: 'numeric' };
-    navDateDisplay.textContent = today.toLocaleDateString('en-US', options).toUpperCase();
-  }
+// ==========================================
+// 2. EXERCISE DATABASE
+// ==========================================
+const exerciseDB = {
+    "Chest": ["Flat Bench Press", "Incline Dumbbell Press", "Chest Dumbbell Pullover", "Cable Crossovers"],
+    "Back": ["Barbell Row", "Rack Pulls", "Lat Pulldown", "Pull-ups"],
+    "Legs": ["Squats", "Leg Press", "Romanian Deadlift", "Calf Raises"],
+    "Shoulders": ["Overhead Press", "Lateral Raises", "Face Pulls"],
+    "Arms": ["Bicep Curls (Incline Angle)", "Tricep Pushdowns", "Hammer Curls", "Skull Crushers"]
+};
 
-  // Routine Presets
-  const splitPresets = {
-    push: [
-      "Barbell Bench Press (Chest)",
-      "Incline Dumbbell Press (Upper Chest)",
-      "Standing Overhead Press (Shoulders)",
-      "Lateral Cable Raises (Side Delts)",
-      "Triceps Rope Pushdown (Triceps)"
-    ],
-    pull: [
-      "Barbell Deadlift / Rack Pull (Posterior)",
-      "Lat Pulldowns (Lats)",
-      "Chest-Supported Row (Mid Back)",
-      "Face Pulls (Rear Delts)",
-      "Incline Dumbbell Bicep Curls (Biceps)"
-    ],
-    legs: [
-      "Barbell Back Squats (Quads)",
-      "Romanian Deadlifts (Hamstrings)",
-      "Bulgarian Split Squats (Glutes/Quads)",
-      "Seated Leg Curls (Hamstrings)",
-      "Standing Calf Raises (Calves)"
-    ]
-  };
+// ==========================================
+// 3. UI & NAVIGATION LOGIC
+// ==========================================
+const views = {
+    profile: document.getElementById("view-profile"),
+    tracker: document.getElementById("view-tracker"),
+    library: document.getElementById("view-library"),
+    special: document.getElementById("view-special")
+};
+const navBtns = {
+    profile: document.getElementById("nav-profile"),
+    tracker: document.getElementById("nav-tracker"),
+    library: document.getElementById("nav-library"),
+    special: document.getElementById("nav-special")
+};
 
-  let activeSessionData = {
-    split: "",
-    sets: []
-  };
-
-  const WEEKLY_GOAL_VOL = 35000;
-
-  // --- 1. Authentication & Profile Switcher ---
-  function checkAuthState() {
-    const savedName = localStorage.getItem("gymrat_username");
-    const savedDiv = localStorage.getItem("gymrat_division");
-
-    if (savedName) {
-      heroUserName.textContent = savedName.toUpperCase();
-      heroUserDivision.textContent = `/ ${savedDiv || "GYMRAT DIVISION"}`;
-      authBtnText.textContent = "Log Out";
-      loginModal.style.display = "none";
-    } else {
-      heroUserName.textContent = "GUEST ATHLETE";
-      heroUserDivision.textContent = "/ TRIAL MODE";
-      authBtnText.textContent = "Log In";
-    }
-  }
-
-  authActionBtn.addEventListener("click", () => {
-    const loggedIn = localStorage.getItem("gymrat_username");
-    if (loggedIn) {
-      // Perform Logout
-      localStorage.removeItem("gymrat_username");
-      localStorage.removeItem("gymrat_division");
-      checkAuthState();
-    } else {
-      // Open Login Modal
-      loginModal.style.display = "flex";
-    }
-  });
-
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const name = loginUsername.value.trim();
-    const div = loginDivision.value;
-
-    if (name) {
-      localStorage.setItem("gymrat_username", name);
-      localStorage.setItem("gymrat_division", div);
-      checkAuthState();
-    }
-  });
-
-  // Close modal when clicking outside card
-  loginModal.addEventListener("click", (e) => {
-    if (e.target === loginModal) {
-      loginModal.style.display = "none";
-    }
-  });
-
-  // Default User Initialization
-  if (!localStorage.getItem("gymrat_username")) {
-    localStorage.setItem("gymrat_username", "HARISH");
-    localStorage.setItem("gymrat_division", "GYMRAT DIVISION");
-  }
-  checkAuthState();
-
-  // --- 2. Story Avatar Upload ---
-  const savedAvatar = localStorage.getItem("gymrat_avatar_url");
-  if (savedAvatar) {
-    profileImg.src = savedAvatar;
-    profileImg.classList.add("has-image");
-  }
-
-  if (avatarContainer && fileInput) {
-    avatarContainer.addEventListener("click", () => fileInput.click());
-
-    fileInput.addEventListener("change", (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const base64Photo = event.target.result;
-          profileImg.src = base64Photo;
-          profileImg.classList.add("has-image");
-          localStorage.setItem("gymrat_avatar_url", base64Photo);
-        };
-        reader.readAsDataURL(file);
-      }
+function switchView(targetView) {
+    // Hide all views and remove active class from all buttons
+    Object.keys(views).forEach(key => {
+        views[key].style.display = "none";
+        navBtns[key].classList.remove("active");
     });
-  }
+    // Show target view and set active button
+    views[targetView].style.display = "block";
+    navBtns[targetView].classList.add("active");
 
-  // --- 3. Quick Stats & Progress Bar Calculation ---
-  function updateStatsDisplay() {
-    const vol = parseFloat(localStorage.getItem("gymrat_today_volume") || 0);
-    const sets = parseInt(localStorage.getItem("gymrat_sets_logged") || 0);
-    const workouts = parseInt(localStorage.getItem("gymrat_workouts_done") || 0);
+    if(targetView === 'profile') loadHistory();
+    if(targetView === 'library') loadLibrary();
+}
 
-    if (heroTodayVol) heroTodayVol.innerHTML = `${vol.toLocaleString()} <small>kg</small>`;
-    if (heroSetsLogged) heroSetsLogged.textContent = sets;
-    if (heroWorkoutsDone) heroWorkoutsDone.textContent = workouts;
-
-    // Progress Bar
-    const pct = Math.min(100, Math.round((vol / WEEKLY_GOAL_VOL) * 100));
-    if (progressMetricText) {
-      progressMetricText.textContent = `${vol.toLocaleString()} / ${WEEKLY_GOAL_VOL.toLocaleString()} kg (${pct}%)`;
-    }
-    if (weeklyProgressFill) {
-      weeklyProgressFill.style.width = `${pct}%`;
-    }
-  }
-  updateStatsDisplay();
-
-  // --- 4. Split Session View Switching ---
-  document.querySelectorAll(".split-card").forEach((card) => {
-    card.addEventListener("click", () => {
-      const splitType = card.dataset.split;
-      activeSessionData.split = splitType;
-      activeSessionData.sets = [];
-
-      // Update Exercise Presets
-      exerciseSelect.innerHTML = "";
-      splitPresets[splitType].forEach((ex) => {
-        const opt = document.createElement("option");
-        opt.value = ex;
-        opt.textContent = ex;
-        exerciseSelect.appendChild(opt);
-      });
-
-      // Update Header
-      sessionNameHeader.textContent = `${splitType.toUpperCase()} LOGGING CHAMBER`;
-
-      // Clear Table
-      sessionLogTbody.innerHTML = `<tr class="empty-row"><td colspan="5">No sets logged yet in this session.</td></tr>`;
-
-      // Swap views
-      viewWorkout.style.display = "none";
-      viewLogging.style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  });
-
-  // Back to Hub
-  if (backBtn) {
-    backBtn.addEventListener("click", () => {
-      viewLogging.style.display = "none";
-      viewWorkout.style.display = "block";
-    });
-  }
-
-  // --- 5. Logging Set Execution ---
-  if (saveSetBtn) {
-    saveSetBtn.addEventListener("click", () => {
-      const weight = parseFloat(inputWeight.value);
-      const reps = parseInt(inputReps.value);
-      const exercise = exerciseSelect.value;
-
-      if (!weight || !reps || weight <= 0 || reps <= 0) {
-        alert("Please enter valid weight and reps values.");
-        return;
-      }
-
-      const totalVol = weight * reps;
-      const setNumber = activeSessionData.sets.length + 1;
-
-      activeSessionData.sets.push({ setNumber, exercise, weight, reps, totalVol });
-
-      if (activeSessionData.sets.length === 1) {
-        sessionLogTbody.innerHTML = "";
-      }
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><strong>#${setNumber}</strong></td>
-        <td>${exercise}</td>
-        <td>${weight} kg</td>
-        <td>${reps}</td>
-        <td style="color: var(--accent-crimson); font-weight:700;">+${totalVol.toLocaleString()} kg</td>
-      `;
-      sessionLogTbody.appendChild(tr);
-
-      // Save incremental stats
-      let currentVol = parseFloat(localStorage.getItem("gymrat_today_volume") || 0) + totalVol;
-      let currentSets = parseInt(localStorage.getItem("gymrat_sets_logged") || 0) + 1;
-      localStorage.setItem("gymrat_today_volume", currentVol);
-      localStorage.setItem("gymrat_sets_logged", currentSets);
-
-      updateStatsDisplay();
-
-      // UI Feedback
-      inputReps.value = "";
-      saveSetBtn.textContent = "✓ Logged!";
-      setTimeout(() => {
-        saveSetBtn.textContent = "Log Set";
-      }, 700);
-    });
-  }
-
-  // --- 6. Complete Workout ---
-  if (finishBtn) {
-    finishBtn.addEventListener("click", () => {
-      if (activeSessionData.sets.length > 0) {
-        let workouts = parseInt(localStorage.getItem("gymrat_workouts_done") || 0) + 1;
-        localStorage.setItem("gymrat_workouts_done", workouts);
-        updateStatsDisplay();
-      }
-
-      viewLogging.style.display = "none";
-      viewWorkout.style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  }
+// Attach click listeners to nav buttons
+Object.keys(navBtns).forEach(key => {
+    navBtns[key].addEventListener("click", () => switchView(key));
 });
+
+function showDashboard() {
+    document.getElementById("landing-page").style.display = "none";
+    document.getElementById("app-workspace").style.display = "block";
+    switchView('tracker'); // Default to tracker on login
+}
+
+function showLandingPage() {
+    document.getElementById("app-workspace").style.display = "none";
+    document.getElementById("landing-page").style.display = "flex";
+}
+
+// Password Toggle Logic
+const togglePassword = document.getElementById("toggle-password");
+const passwordInput = document.getElementById("password");
+
+togglePassword.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
+});
+
+// ==========================================
+// 4. WORKOUT TRACKER LOGIC
+// ==========================================
+const muscleSelect = document.getElementById("muscle-group-select");
+const exerciseSelect = document.getElementById("exercise-select");
+
+muscleSelect.addEventListener("change", (e) => {
+    const selectedMuscle = e.target.value;
+    exerciseSelect.innerHTML = '<option value="">-- Select Exercise --</option>'; // Reset
+    
+    if (selectedMuscle && exerciseDB[selectedMuscle]) {
+        exerciseSelect.disabled = false;
+        exerciseDB[selectedMuscle].forEach(ex => {
+            const opt = document.createElement("option");
+            opt.value = ex;
+            opt.innerText = ex;
+            exerciseSelect.appendChild(opt);
+        });
+    } else {
+        exerciseSelect.disabled = true;
+    }
+});
+
+// ==========================================
+// 5. AUTHENTICATION
+// ==========================================
+const emailInput = document.getElementById("email");
+const authError = document.getElementById("auth-error");
+
+onAuthStateChanged(auth, (user) => {
+    if (user) showDashboard();
+    else showLandingPage();
+});
+
+document.getElementById("btn-signup").addEventListener("click", async () => {
+    try {
+        authError.innerText = "";
+        await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+    } catch (error) { authError.innerText = error.message; }
+});
+
+document.getElementById("btn-login").addEventListener("click", async () => {
+    try {
+        authError.innerText = "";
+        await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+    } catch (error) { authError.innerText = "Invalid credentials. Try again."; }
+});
+
+document.getElementById("btn-logout").addEventListener("click", async () => {
+    await signOut(auth);
+    emailInput.value = "";
+    passwordInput.value = "";
+});
+
+// ==========================================
+// 6. DATABASE LOGIC (FIRESTORE)
+// ==========================================
+document.getElementById("btn-save-workout").addEventListener("click", async () => {
+    const name = exerciseSelect.value;
+    const weight = document.getElementById("exercise-weight").value;
+    const reps = document.getElementById("exercise-reps").value;
+    const statusText = document.getElementById("save-status");
+
+    if(!name || !weight || !reps) {
+        statusText.style.color = "red";
+        statusText.innerText = "Select exercise and enter weight/reps.";
+        return;
+    }
+
+    try {
+        await addDoc(collection(db, "workouts"), {
+            uid: auth.currentUser.uid,
+            exercise: name,
+            weight: Number(weight),
+            reps: Number(reps),
+            date: new Date().toISOString()
+        });
+        
+        statusText.style.color = "#22c55e";
+        statusText.innerText = "Set Logged Successfully!";
+        document.getElementById("exercise-weight").value = "";
+        document.getElementById("exercise-reps").value = "";
+        setTimeout(() => statusText.innerText = "", 3000);
+    } catch (error) {
+        statusText.style.color = "red";
+        statusText.innerText = "Database Error: " + error.message;
+    }
+});
+
+async function loadHistory() {
+    const list = document.getElementById("history-list");
+    list.innerHTML = "Loading your growth data...";
+    
+    try {
+        const q = query(collection(db, "workouts"), orderBy("date", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        list.innerHTML = "";
+        let hasData = false;
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if(data.uid === auth.currentUser.uid) {
+                hasData = true;
+                const li = document.createElement("li");
+                li.innerText = `${new Date(data.date).toLocaleDateString()} | ${data.exercise} - ${data.weight}kg x ${data.reps} reps`;
+                list.appendChild(li);
+            }
+        });
+
+        if(!hasData) list.innerHTML = "No workouts logged yet. Start lifting!";
+    } catch (error) { list.innerHTML = "Error loading history."; }
+}
+
+// Load Exercise Library for Search Tab
+function loadLibrary() {
+    const libraryList = document.getElementById("library-list");
+    const searchInput = document.getElementById("search-library");
+    
+    // Flatten the database into one array
+    let allExercises = [];
+    Object.values(exerciseDB).forEach(arr => allExercises = allExercises.concat(arr));
+    
+    const renderList = (filterText = "") => {
+        libraryList.innerHTML = "";
+        allExercises.filter(ex => ex.toLowerCase().includes(filterText.toLowerCase())).forEach(ex => {
+            const li = document.createElement("li");
+            li.innerText = ex;
+            libraryList.appendChild(li);
+        });
+    };
+    
+    renderList(); // Initial render
+    searchInput.addEventListener("input", (e) => renderList(e.target.value));
+}
