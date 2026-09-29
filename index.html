@@ -3,148 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GYMRAT | Hypertrophy Engine</title>
+    <title>GYMRAT | Fitness Tracker System</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- 1. LOGIN PAGE -->
-    <div id="landing-page" class="screen-container">
-        <div class="auth-card">
-            <div class="brand-header">
-                <h1>GYMRAT</h1>
-                <p>HYPERTROPHY & OVERLOAD ENGINE</p>
-            </div>
+    <!-- LOGIN SYSTEM -->
+    <div id="landing-page" class="login-wrapper">
+        <div class="login-card">
+            <h2 id="auth-title">Login</h2>
+            <p class="subtitle" id="auth-subtitle">Welcome back to GYMRAT</p>
             
-            <div class="input-group">
-                <input type="email" id="email" placeholder="Athlete Email Address">
-                <div class="password-wrapper">
-                    <input type="password" id="password" placeholder="Access Code (Password)">
+            <form id="auth-form">
+                <div class="form-group" id="name-group" style="display: none;">
+                    <label>USERNAME</label>
+                    <input type="text" id="name" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>EMAIL</label>
+                    <input type="email" id="email" placeholder="Enter email address">
+                </div>
+                <div class="form-group password-group">
+                    <label>PASSWORD</label>
+                    <input type="password" id="password" placeholder="Enter password">
                     <span id="toggle-password" class="eye-icon">👁️</span>
                 </div>
-            </div>
+                
+                <p id="auth-error" class="error-msg"></p>
+                
+                <button type="button" id="btn-submit" class="btn-primary">Login</button>
+            </form>
             
-            <p id="auth-error" class="error-text"></p>
-            <p id="auth-success" class="success-text"></p>
-            
-            <div class="button-group">
-                <button type="button" id="btn-login" class="primary-btn">Authenticate & Enter →</button>
-                <button type="button" id="btn-signup" class="secondary-btn">Register New Athlete</button>
-            </div>
+            <p class="auth-switch">Don't have an account? <span id="btn-toggle-mode" class="text-link">Register</span></p>
         </div>
     </div>
 
-    <!-- 2. MAIN APP DASHBOARD -->
-    <div id="app-workspace" class="screen-container" style="display: none;">
+    <!-- MAIN SYSTEM DASHBOARD -->
+    <div id="app-workspace" class="app-layout" style="display: none;">
         
-        <!-- Navigation Menu -->
-        <nav class="top-nav">
-            <div class="nav-brand">GYMRAT <span class="badge">PRO</span></div>
-            <div class="nav-links">
-                <button type="button" id="nav-profile" class="nav-btn">Profile</button>
-                <button type="button" id="nav-tracker" class="nav-btn active">Tracker</button>
-                <button type="button" id="nav-library" class="nav-btn">Library</button>
-                <button type="button" id="nav-special" class="nav-btn">Engine</button>
-                <button type="button" id="btn-logout" class="nav-btn danger">Logout</button>
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>GYMRAT</h2>
+                <p>System Tracker</p>
             </div>
-        </nav>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-target="view-dashboard">Dashboard</li>
+                <li class="menu-item" data-target="view-log">Log Workout</li>
+                <li class="menu-item" data-target="view-history">Workout History</li>
+                <li class="menu-item" data-target="view-library">Exercise Library</li>
+                <li class="menu-item text-danger" id="btn-logout">Logout</li>
+            </ul>
+        </aside>
 
-        <!-- View: Profile & Dashboard -->
-        <div id="view-profile" class="app-section" style="display: none;">
-            <div class="profile-header card">
-                <div class="avatar-circle">H</div>
-                <div class="profile-info">
-                    <span class="status-badge">● ACTIVE ATHLETE</span>
-                    <h2>HARISH <span class="division-text">/ CLASSIC PHYSIQUE</span></h2>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <h2>Welcome, Harish!</h2>
+                <div class="user-profile">
+                    <div class="avatar">H</div>
                 </div>
-            </div>
+            </header>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4>TODAY'S VOLUME</h4>
-                    <h2>0 <span class="unit">kg</span></h2>
-                </div>
-                <div class="stat-card">
-                    <h4>SETS LOGGED</h4>
-                    <h2>0</h2>
-                </div>
-            </div>
-
-            <div class="card mt-20">
-                <h3>Workout History</h3>
-                <ul id="history-list" class="history-list"></ul>
-            </div>
-        </div>
-
-        <!-- View: Workout Tracker -->
-        <div id="view-tracker" class="app-section">
-            <div class="section-header">
-                <h2>Logging Chamber</h2>
-                <p>Select your split focus and log your progressive overload.</p>
-            </div>
-            
-            <div class="card logger-card">
-                <div class="input-block">
-                    <label>Target Muscle Group</label>
-                    <select id="muscle-group-select" class="modern-select">
-                        <option value="">-- Select Target Area --</option>
-                        <option value="Chest">Chest (Push)</option>
-                        <option value="Back">Back (Pull)</option>
-                        <option value="Legs">Legs (Lower)</option>
-                        <option value="Shoulders">Shoulders (Push)</option>
-                        <option value="Arms">Arms</option>
-                    </select>
-                </div>
-
-                <div class="input-block">
-                    <label>Specific Exercise</label>
-                    <select id="exercise-select" class="modern-select" disabled>
-                        <option value="">-- Select Exercise --</option>
-                    </select>
-                </div>
-
-                <div class="metrics-grid">
-                    <div class="input-block">
-                        <label>Weight (kg)</label>
-                        <input type="number" id="exercise-weight" placeholder="e.g. 60">
-                    </div>
-                    <div class="input-block">
-                        <label>Reps Completed</label>
-                        <input type="number" id="exercise-reps" placeholder="e.g. 10">
-                    </div>
-                </div>
+            <div class="content-wrapper">
                 
-                <button type="button" id="btn-save-workout" class="primary-btn mt-20">Log Set to Cloud</button>
-                <p id="save-status" class="success-text center-text"></p>
-            </div>
-        </div>
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="system-view">
+                    <p class="view-desc">Track your fitness journey and achieve your goals.</p>
+                    
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <h3>Total Workouts</h3>
+                            <h1 id="stat-workouts">0</h1>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Total Sets Logged</h3>
+                            <h1 id="stat-sets">0</h1>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Calories Burned</h3>
+                            <h1 id="stat-cals">0</h1>
+                        </div>
+                    </div>
 
-        <!-- View: Exercise Library -->
-        <div id="view-library" class="app-section" style="display: none;">
-            <div class="section-header">
-                <h2>Anatomy & Library</h2>
-                <p>Search the database for form and mechanics.</p>
-            </div>
-            <div class="card">
-                <input type="text" id="search-library" class="search-bar" placeholder="Search exercises (e.g., Pullover, Squat)...">
-                <ul id="library-list" class="library-grid">
-                    <!-- Populated by JS -->
-                </ul>
-            </div>
-        </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Recent Workouts</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="system-table">
+                                <thead>
+                                    <tr>
+                                        <th>EXERCISE</th>
+                                        <th>SETS</th>
+                                        <th>REPS</th>
+                                        <th>WEIGHT</th>
+                                        <th>DATE</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- View: Special Feature -->
-        <div id="view-special" class="app-section" style="display: none;">
-            <div class="section-header">
-                <h2>Hypertrophy Engine</h2>
-                <p>Advanced Analytics & Weekly Overload Targets</p>
-            </div>
-            <div class="card center-text padding-40">
-                <h1 style="color: #ff2a5f; margin-bottom: 10px;">ENGINE READY</h1>
-                <p>Analytics algorithms will unlock after 7 days of logging data.</p>
-            </div>
-        </div>
+                <!-- VIEW: LOG WORKOUT -->
+                <div id="view-log" class="system-view" style="display: none;">
+                    <div class="panel form-panel">
+                        <div class="panel-header">
+                            <h3>Log New Workout</h3>
+                            <p>Record your exercise sessions and progressive overload.</p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>EXERCISE NAME</label>
+                                <input type="text" id="log-name" placeholder="e.g., Barbell Bench Press">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>SETS</label>
+                                    <input type="number" id="log-sets" placeholder="e.g., 4">
+                                </div>
+                                <div class="form-group">
+                                    <label>REPS</label>
+                                    <input type="number" id="log-reps" placeholder="e.g., 10">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>WEIGHT (KG)</label>
+                                    <input type="number" id="log-weight" placeholder="e.g., 80">
+                                </div>
+                                <div class="form-group">
+                                    <label>CALORIES BURNED (Est.)</label>
+                                    <input type="number" id="log-cals" placeholder="e.g., 150">
+                                </div>
+                            </div>
+                            <button type="button" id="btn-save-workout" class="btn-primary">Log Workout</button>
+                            <p id="save-status" class="status-msg"></p>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- VIEW: WORKOUT HISTORY -->
+                <div id="view-history" class="system-view" style="display: none;">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Workout History</h3>
+                            <p>Keep a complete record of your exercise sessions.</p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="system-table">
+                                <thead>
+                                    <tr>
+                                        <th>EXERCISE</th>
+                                        <th>SETS</th>
+                                        <th>REPS</th>
+                                        <th>WEIGHT (KG)</th>
+                                        <th>CALS</th>
+                                        <th>DATE</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: EXERCISE LIBRARY -->
+                <div id="view-library" class="system-view" style="display: none;">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Exercise Library</h3>
+                            <p>Search standard movements and target muscles.</p>
+                        </div>
+                        <div class="panel-body">
+                            <input type="text" id="search-lib" class="search-box" placeholder="Search exercises...">
+                            <ul id="library-list" class="lib-list">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
 
     <script type="module" src="app.js"></script>
