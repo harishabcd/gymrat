@@ -5,8 +5,7 @@ import { getFirestore, collection, addDoc, getDocs, query, orderBy, where } from
 // ==========================================
 // 1. FIREBASE CONFIGURATION
 // ==========================================
-Config = {
- const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyDMcZEWAepTtKiIucdKmXUi2euT29XPBFM",
   authDomain: "fir-71583.firebaseapp.com",
   projectId: "fir-71583",
