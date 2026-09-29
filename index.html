@@ -1,71 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GYMRAT | Hypertrophy Engine</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GYMRAT | Hypertrophy Engine</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-    <!-- 1. LANDING & LOGIN PAGE -->
-    <div id="landing-page" class="screen-container">
-        <div class="auth-card">
-            <h1>GYMRAT</h1>
-            <p>Progressive Overload & Hypertrophy Engine</p>
-            
-            <div class="input-group">
-                <input type="email" id="email" placeholder="Email Address">
-                <input type="password" id="password" placeholder="Password">
-            </div>
-            
-            <p id="auth-error" class="error-text"></p>
-            <p id="auth-success" class="success-text"></p>
-            
-            <div class="button-group">
-                <button type="button" id="btn-login" class="primary-btn">Sign In</button>
-                <button type="button" id="btn-signup" class="secondary-btn">Create Account</button>
-            </div>
-        </div>
-    </div>
+  <!-- Ambient Glow Canvas -->
+  <div class="ambient-glow glow-top-left"></div>
+  <div class="ambient-glow glow-bottom-right"></div>
 
-    <!-- 2. MAIN APP DASHBOARD (Hidden until logged in) -->
-    <div id="app-workspace" class="screen-container" style="display: none;">
+  <!-- Top Navigation Bar -->
+  <header class="app-navbar">
+    <div class="navbar-inner">
+      <div class="brand-cluster">
+        <div class="brand-badge">
+          <!-- Geometric Bolt Logo -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">GYMRAT</h1>
+          <p class="brand-sub">HYPERTROPHY & OVERLOAD ENGINE</p>
+        </div>
+      </div>
+
+      <!-- Right Nav Control Cluster -->
+      <div class="nav-controls">
+        <div class="status-indicator-pill">
+          <span class="live-dot green"></span>
+          <span class="status-label">ENGINE READY</span>
+        </div>
+        <div class="date-badge" id="nav-date-display">SUN, SEP 27</div>
         
-        <!-- Navigation Menu -->
-        <nav class="top-nav">
-            <div class="nav-brand">GYMRAT Dashboard</div>
-            <div class="nav-links">
-                <button type="button" id="nav-logger" class="nav-btn active">Logger</button>
-                <button type="button" id="nav-history" class="nav-btn">History</button>
-                <button type="button" id="btn-logout" class="nav-btn danger">Logout</button>
-            </div>
-        </nav>
+        <!-- Dynamic Auth Button -->
+        <button class="btn btn-auth" id="auth-action-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span id="auth-btn-text">Log Out</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
-        <!-- Workout Logger View -->
-        <div id="view-logger" class="app-section">
-            <h2>Log a Workout</h2>
-            <div class="logger-card">
-                <input type="text" id="exercise-name" placeholder="Exercise Name (e.g. Squat)">
-                <input type="number" id="exercise-weight" placeholder="Weight (kg)">
-                <input type="number" id="exercise-reps" placeholder="Reps">
-                <button type="button" id="btn-save-workout" class="primary-btn">Save to Cloud</button>
-                <p id="save-status" class="success-text"></p>
+  <!-- Login Modal Overlay -->
+  <div class="modal-overlay" id="login-modal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="brand-badge small">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <h3 class="modal-title">Athlete Access</h3>
+      </div>
+      <p class="modal-subtitle">Log in to sync your hypertrophy sessions and metrics.</p>
+      
+      <form id="login-form" class="modal-form">
+        <div class="form-group">
+          <label class="field-title" for="login-username">Athlete Name</label>
+          <input type="text" id="login-username" class="text-input" placeholder="Enter athlete name..." required />
+        </div>
+        <div class="form-group">
+          <label class="field-title" for="login-division">Division</label>
+          <select id="login-division" class="text-input">
+            <option value="GYMRAT DIVISION">GYMRAT DIVISION</option>
+            <option value="CLASSIC PHYSIQUE">CLASSIC PHYSIQUE</option>
+            <option value="POWERLIFTING CORE">POWERLIFTING CORE</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-crimson btn-block">AUTHENTICATE →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="page-container">
+
+    <!-- ================= VIEW 1: WORKOUT HUB ================= -->
+    <div class="app-view active" id="view-workout">
+      
+      <!-- Profile Hero Card -->
+      <section class="profile-hero-card">
+        
+        <!-- Story Avatar -->
+        <div class="story-avatar-container" id="avatar-container" title="Click to upload custom photo">
+          <input type="file" id="profile-photo-input" accept="image/*" style="display: none;" />
+          <div class="story-gradient-ring"></div>
+          <div class="story-avatar-inner">
+            <img src="" alt="Profile Avatar" class="profile-cover-photo" id="user-profile-img" />
+            <div class="avatar-empty-state" id="avatar-hint">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span>Add Photo</span>
             </div>
+          </div>
         </div>
 
-        <!-- Workout History View (Hidden by default) -->
-        <div id="view-history" class="app-section" style="display: none;">
-            <h2>Your Workout History</h2>
-            <div class="history-card">
-                <ul id="history-list">
-                    <!-- Data will load here -->
-                </ul>
+        <!-- Profile Details -->
+        <div class="profile-details">
+          <div class="profile-header-row">
+            <div>
+              <span class="pill-tag"><span class="live-dot crimson"></span>ACTIVE ATHLETE</span>
+              <h2 class="profile-name">
+                <span id="hero-user-name">HARISH</span> 
+                <span class="dimmed" id="hero-user-division">/ GYMRAT DIVISION</span>
+              </h2>
             </div>
+          </div>
+
+          <!-- Brief Stats Strip -->
+          <div class="brief-stats-strip">
+            <div class="stat-pill-item">
+              <span class="pill-label">TODAY'S VOLUME</span>
+              <span class="pill-val" id="hero-today-volume">0 <small>kg</small></span>
+            </div>
+            <div class="stat-pill-item">
+              <span class="pill-label">SETS LOGGED</span>
+              <span class="pill-val" id="hero-sets-logged">0</span>
+            </div>
+            <div class="stat-pill-item">
+              <span class="pill-label">WORKOUTS DONE</span>
+              <span class="pill-val" id="hero-workouts-done">0</span>
+            </div>
+          </div>
+
+          <!-- Interactive Weekly Progress Bar -->
+          <div class="progress-block">
+            <div class="progress-labels">
+              <span class="prog-title">WEEKLY OVERLOAD TARGET</span>
+              <span class="prog-metric" id="progress-metric-text">0 / 35,000 kg (0%)</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="weekly-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
         </div>
+      </section>
+
+      <!-- Routine Split Selector -->
+      <section class="split-selection-container">
+        <div class="section-title-wrap">
+          <span class="section-step-num">1</span>
+          <div>
+            <h3 class="section-title">Choose Your Split Focus</h3>
+            <p class="section-subtitle">Select today's objective. Entering locks out distractions and opens the Logging Chamber.</p>
+          </div>
+        </div>
+
+        <div class="splits-grid">
+          <!-- Push Card -->
+          <div class="split-card" data-split="push">
+            <div class="split-badge-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff2b43" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="m4.93 4.93 4.24 4.24"></path>
+                <path d="m14.83 9.17 4.24-4.24"></path>
+                <path d="m14.83 14.83 4.24 4.24"></path>
+                <path d="m9.17 14.83-4.24 4.24"></path>
+              </svg>
+            </div>
+            <h4 class="split-name">Push Routine</h4>
+            <p class="split-muscles">Chest • Shoulders • Triceps</p>
+            <button class="btn btn-crimson split-enter-btn">Enter Session →</button>
+          </div>
+
+          <!-- Pull Card -->
+          <div class="split-card" data-split="pull">
+            <div class="split-badge-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <h4 class="split-name">Pull Routine</h4>
+            <p class="split-muscles">Lats • Upper Back • Biceps</p>
+            <button class="btn btn-crimson split-enter-btn">Enter Session →</button>
+          </div>
+
+          <!-- Legs Card -->
+          <div class="split-card" data-split="legs">
+            <div class="split-badge-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffaa00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+              </svg>
+            </div>
+            <h4 class="split-name">Legs Routine</h4>
+            <p class="split-muscles">Quads • Hamstrings • Calves</p>
+            <button class="btn btn-crimson split-enter-btn">Enter Session →</button>
+          </div>
+        </div>
+      </section>
 
     </div>
 
-    <script type="module" src="app.js"></script>
+    <!-- ================= VIEW 2: LOGGING CHAMBER ================= -->
+    <div class="app-view" id="view-logging" style="display: none;">
+      <section class="chamber-card">
+        
+        <!-- Chamber Navigation Bar -->
+        <div class="chamber-header">
+          <button class="btn-ghost" id="back-to-hub-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Hub
+          </button>
+          <div class="chamber-status">
+            <span class="live-pulse"></span>
+            <span id="active-session-name">PUSH LOGGING CHAMBER</span>
+          </div>
+        </div>
+
+        <!-- Exercise Focus & Selection -->
+        <div class="exercise-controller">
+          <label class="field-title" for="exercise-select">TARGET EXERCISE</label>
+          <select id="exercise-select" class="text-input full-width-select"></select>
+        </div>
+
+        <!-- Logging Input Box -->
+        <div class="logging-box">
+          <div class="input-inline-grid">
+            <div class="input-block">
+              <label>LOAD WEIGHT (KG)</label>
+              <div class="input-with-tag">
+                <input type="number" id="input-weight" class="text-input" placeholder="60" min="1" step="0.5" />
+                <span class="unit-tag">kg</span>
+              </div>
+            </div>
+            <div class="input-block">
+              <label>REPS COMPLETED</label>
+              <div class="input-with-tag">
+                <input type="number" id="input-reps" class="text-input" placeholder="10" min="1" />
+                <span class="unit-tag">reps</span>
+              </div>
+            </div>
+            <div class="input-block action-block">
+              <button class="btn btn-crimson" id="save-set-btn">Log Set</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Session Set Log Table -->
+        <div class="session-logs-section">
+          <h4 class="log-title">SESSION LOGGED SETS</h4>
+          <div class="table-responsive">
+            <table class="session-table">
+              <thead>
+                <tr>
+                  <th>SET #</th>
+                  <th>EXERCISE</th>
+                  <th>LOAD</th>
+                  <th>REPS</th>
+                  <th>NET VOLUME</th>
+                </tr>
+              </thead>
+              <tbody id="session-log-tbody">
+                <tr class="empty-row"><td colspan="5">No sets logged yet in this session.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Finish Bar -->
+        <div class="finish-session-bar">
+          <button class="btn btn-outline" id="finish-session-btn">Complete & Finish Workout</button>
+        </div>
+
+      </section>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
