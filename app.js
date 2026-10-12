@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getAuth, initializeAuth, browserLocalPersistence, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 
@@ -189,8 +189,11 @@ function showToast(msg) {
 // --- FIREBASE CRUD, DASHBOARD, & AI INSIGHTS ---
 // ==========================================
 async function loadSystemData() {
+    const user = auth.currentUser;
+    if (!user) return; // Stop if no one is logged in
+
     try {
-        const q = query(collection(db, "workouts"), orderBy("date", "desc"));
+        const q = query(collection(db, "workouts"), where("userId", "==", user.uid), orderBy("date", "desc"));
         const snapshot = await getDocs(q);
         
         const historyBody = document.getElementById("history-table-body");
@@ -216,7 +219,39 @@ async function loadSystemData() {
                 reps: row.reps,
                 oneRM: oneRM,
                 date: row.date
+            
+            
             });
+             // --- PERSONAL RECORDS CALCULATOR ---
+    const prContainer = window.document.getElementById("pr-container");
+    if (prContainer) {
+        let prHTML = "";
+        
+        // Scan the downloaded history for max weights
+        for (const exercise in window.exerciseHistory) {
+            let maxWeight = 0;
+            window.exerciseHistory[exercise].forEach(set => {
+                if (set.weight > maxWeight) maxWeight = set.weight;
+            });
+            
+            // Build the visual card for any lift over 0kg
+            if (maxWeight > 0) {
+                prHTML += `
+                <div style="display: flex; justify-content: space-between; background: rgba(30, 41, 59, 0.5); padding: 10px 15px; border-radius: 8px; margin-bottom: 8px;">
+                    <span style="color: #cbd5e1; font-size: 0.9rem;">${exercise}</span>
+                    <strong style="color: #10b981;">${maxWeight} kg</strong>
+                </div>`;
+            }
+        }
+
+        // Update the dashboard: Show PRs if they exist, otherwise keep the blank slate message
+        if (prHTML !== "") {
+            prContainer.innerHTML = prHTML;
+        } else {
+            prContainer.innerHTML = '<p style="color: #64748b; text-align: center; font-size: 0.9rem; padding: 20px;">No personal records yet. Log a workout to set your baseline!</p>';
+        }
+    }
+
 
             if (historyBody) {
                 historyBody.innerHTML += `
@@ -346,17 +381,17 @@ if (saveWorkoutBtn) {
         const yyyy = today.getFullYear();
         const formattedDate = `${dd}-${mm}-${yyyy}`;
 
-        const data = {
-            date: formattedDate,
-            category: document.getElementById("log-category").value,
-            exercise: document.getElementById("log-exercise").value,
-            setsSummary: setsData, 
-            sets: setsData.length,
-            reps: setsData[0].reps, 
-            weight: setsData[0].weight, 
-            duration: setsData.length * 3 
-        };
-
+      const data = {
+        userId: auth.currentUser.uid,
+        date: formattedDate,
+        category: document.getElementById("log-category").value,
+        exercise: document.getElementById("log-exercise").value,
+        setsSummary: setsData,
+        sets: setsData.length,
+        reps: setsData[0].reps,
+        weight: setsData[0].weight,
+        duration: setsData.length * 3
+    };
         try {
             await addDoc(collection(db, "workouts"), data);
             showToast("Workout committed successfully!");
@@ -555,22 +590,47 @@ function updateAchievements(snapshotSize, totalCalories) {
 // ==========================================
 // --- AUTHENTICATION ---
 // ==========================================
-const authScreen = document.getElementById("auth-screen"); const appWorkspace = document.getElementById("app-workspace"); let isLoginMode = true;
+const authScreen = document.getElementById("auth-screen"); 
+const appWorkspace = document.getElementById("app-workspace"); 
+let isLoginMode = true;
+
 document.getElementById("btn-toggle-mode")?.addEventListener("click", () => {
-    isLoginMode = !isLoginMode; document.getElementById("auth-title").innerText = isLoginMode ? "System Login" : "Create Account"; document.getElementById("btn-auth-submit").innerText = isLoginMode ? "Login" : "Register"; document.getElementById("auth-toggle-text").innerText = isLoginMode ? "Don't have an account?" : "Already have an account?"; document.getElementById("btn-toggle-mode").innerText = isLoginMode ? "Register" : "Login";
+    isLoginMode = !isLoginMode; 
+    document.getElementById("auth-title").innerText = isLoginMode ? "System Login" : "Create Account"; 
+    document.getElementById("btn-auth-submit").innerText = isLoginMode ? "Login" : "Register"; 
+    document.getElementById("auth-toggle-text").innerText = isLoginMode ? "Don't have an account?" : "Already have an account?"; 
+    document.getElementById("btn-toggle-mode").innerText = isLoginMode ? "Register" : "Login";
 });
 
+// --> THIS IS THE MISSING LOGIN BUTTON CODE <--
 document.getElementById("btn-auth-submit")?.addEventListener("click", async () => {
-    const email = document.getElementById("auth-email").value; const pass = document.getElementById("auth-password").value;
+    const email = document.getElementById("auth-email").value; 
+    const pass = document.getElementById("auth-password").value;
     if (!email || !pass) return alert("Please enter both email and password.");
-    try { if (isLoginMode) await signInWithEmailAndPassword(auth, email, pass); else await createUserWithEmailAndPassword(auth, email, pass); showToast(isLoginMode ? "Login successful!" : "Account created successfully!"); } catch (error) { alert("Authentication Error: " + error.message); }
+    try { 
+        if (isLoginMode) await signInWithEmailAndPassword(auth, email, pass); 
+        else await createUserWithEmailAndPassword(auth, email, pass); 
+        showToast(isLoginMode ? "Login successful!" : "Account created successfully!"); 
+    } catch (error) { 
+        alert("Authentication Error: " + error.message); 
+    }
 });
 
-onAuthStateChanged(auth, (user) => {
-    if (user) { if (authScreen) authScreen.style.display = "none"; if (appWorkspace) appWorkspace.style.display = "block"; checkOnboarding(user); loadSystemData(); loadProfileData(); } else { if (authScreen) authScreen.style.display = "flex"; if (appWorkspace) appWorkspace.style.display = "none"; }
+// --> YOUR UPDATED LOGOUT BUTTON CODE <--
+document.getElementById("btn-logout")?.addEventListener("click", async () => { 
+    try { 
+        // 1. Completely WIPE all local browser memory (Goals, PRs, Water, Food, everything)
+        localStorage.clear();
+        
+        // 2. Sign out of Firebase
+        await signOut(auth); 
+        
+        // 3. Force a complete page reload to instantly reset the app to a blank state
+        window.location.reload();
+    } catch (error) { 
+        alert("Logout Error: " + error.message); 
+    } 
 });
-document.getElementById("btn-logout")?.addEventListener("click", async () => { try { await signOut(auth); showToast("Logged out successfully!"); } catch (error) { alert("Logout Error: " + error.message); } });
-
 // ==========================================
 // --- ONBOARDING ---
 // ==========================================
@@ -716,9 +776,8 @@ function loadBlueprint(planName) {
 // ==========================================
 
 // Global Goal State
-let targetGoals = JSON.parse(localStorage.getItem("gymrat_targets")) || {
-    water: 3000, cals: 2500, p: 150, c: 250, f: 70
-};
+let targetGoals = JSON.parse(localStorage.getItem("gymrat_targets")) || 
+        { water: 0, cals: 0, p: 0, c: 0, f: 0 };
 
 const goalsViewMode = document.getElementById("goals-view-mode");
 const goalsEditMode = document.getElementById("goals-edit-mode");
@@ -742,13 +801,17 @@ document.getElementById("btn-cancel-targets")?.addEventListener("click", () => {
 
 // Handle Goal Saving
 document.getElementById("btn-save-targets")?.addEventListener("click", () => {
+    if (!auth.currentUser) return alert("Please log in to save goals.");
+
     targetGoals.water = Number(document.getElementById("goal-water-input").value) || targetGoals.water;
     targetGoals.cals = Number(document.getElementById("goal-cals-input").value) || targetGoals.cals;
     targetGoals.p = Number(document.getElementById("goal-p-input").value) || targetGoals.p;
     targetGoals.c = Number(document.getElementById("goal-c-input").value) || targetGoals.c;
     targetGoals.f = Number(document.getElementById("goal-f-input").value) || targetGoals.f;
+
+    // Lock the goals to this specific user's ID
+    localStorage.setItem(`gymrat_targets_${auth.currentUser.uid}`, JSON.stringify(targetGoals));
     
-    localStorage.setItem("gymrat_targets", JSON.stringify(targetGoals));
     initTargetInputs();
     toggleGoalsMode(false);
     showToast("Daily targets locked in!");
@@ -758,7 +821,18 @@ document.getElementById("btn-save-targets")?.addEventListener("click", () => {
 
 // Populate target inputs and displays on load
 function initTargetInputs() {
-    // Populate the View Mode Text
+    // 1. Fetch this specific user's goals
+    if (auth.currentUser) {
+        const savedTargets = localStorage.getItem(`gymrat_targets_${auth.currentUser.uid}`);
+        if (savedTargets) {
+            targetGoals = JSON.parse(savedTargets);
+        } else {
+            // New user blank slate defaults
+            targetGoals ={ water: 0, cals: 0, p: 0, c: 0, f: 0 };
+        }
+    }
+
+    // 2. Populate the View Mode Text
     if (document.getElementById("display-goal-water")) {
         document.getElementById("display-goal-water").innerText = targetGoals.water;
         document.getElementById("display-goal-cals").innerText = targetGoals.cals;
@@ -766,7 +840,8 @@ function initTargetInputs() {
         document.getElementById("display-goal-c").innerText = targetGoals.c;
         document.getElementById("display-goal-f").innerText = targetGoals.f;
     }
-    // Populate the Edit Mode Inputs
+    
+    // 3. Populate the Edit Mode Inputs
     if (document.getElementById("goal-water-input")) {
         document.getElementById("goal-water-input").value = targetGoals.water;
         document.getElementById("goal-cals-input").value = targetGoals.cals;
@@ -995,3 +1070,73 @@ window.stopTimer = () => {
         display.style.color = "#38bdf8"; // Reset to Cyan
     }
 };
+
+function clearDashboardUI() {
+    // 1. Clear Profile
+    const nameInput = document.getElementById("profile-name");
+    const ageInput = document.getElementById("profile-age");
+    if (nameInput) nameInput.value = "";
+    if (ageInput) ageInput.value = "";
+
+    // 2. Clear Workout History & Top Stats
+    const historyBody = document.getElementById("history-table-body");
+    const recentBody = document.getElementById("recent-table-body");
+    if (historyBody) historyBody.innerHTML = "";
+    if (recentBody) recentBody.innerHTML = "";
+
+    if (document.getElementById("dash-workouts")) document.getElementById("dash-workouts").innerText = "0";
+    if (document.getElementById("dash-minutes")) document.getElementById("dash-minutes").innerText = "0";
+    if (document.getElementById("dash-calories")) document.getElementById("dash-calories").innerText = "0";
+    
+    const workoutContainer = document.getElementById("workout-history-container");
+    if (workoutContainer) workoutContainer.innerHTML = `<p style="color: #64748b; text-align: center;">No workout history found. Start tracking today!</p>`;
+
+    // 3. Clear AI Insights & Personal Records
+    const insightsContainer = document.getElementById("ai-insights-container");
+    if (insightsContainer) insightsContainer.innerHTML = `<div style="padding: 15px; background: rgba(30, 41, 59, 0.5); border-radius: 8px; text-align: center;"><p style="color: #64748b; font-size: 0.85rem; margin: 0;">Log your first workouts to unlock algorithmic training insights.</p></div>`;
+
+    // 4. Clear Biometrics
+    if (document.getElementById("bio-weight")) document.getElementById("bio-weight").value = "";
+    if (document.getElementById("bio-height")) document.getElementById("bio-height").value = "";
+    if (document.getElementById("bio-age")) document.getElementById("bio-age").value = "";
+    if (document.getElementById("bmi-result-card")) document.getElementById("bmi-result-card").style.display = "none";
+    if (document.getElementById("tdee-result-card")) document.getElementById("tdee-result-card").style.display = "none";
+
+    // 5. Clear Daily Fuel (Water & Macros)
+    if (document.getElementById("water-total-display")) document.getElementById("water-total-display").innerText = "0";
+    if (document.getElementById("water-visual-fill")) document.getElementById("water-visual-fill").style.height = "0%";
+    if (document.getElementById("today-water-logs")) document.getElementById("today-water-logs").innerHTML = "";
+    
+    if (document.getElementById("macro-cal-total")) document.getElementById("macro-cal-total").innerText = "0";
+    if (document.getElementById("macro-p-total")) document.getElementById("macro-p-total").innerText = "0";
+    if (document.getElementById("macro-c-total")) document.getElementById("macro-c-total").innerText = "0";
+    if (document.getElementById("macro-f-total")) document.getElementById("macro-f-total").innerText = "0";
+    
+    if (document.getElementById("bar-protein")) document.getElementById("bar-protein").style.width = "0%";
+    if (document.getElementById("bar-carbs")) document.getElementById("bar-carbs").style.width = "0%";
+    if (document.getElementById("bar-fats")) document.getElementById("bar-fats").style.width = "0%";
+    
+    if (document.getElementById("food-log-list")) document.getElementById("food-log-list").innerHTML = "";
+}
+
+onAuthStateChanged(auth, (user) => {
+    if (user) { 
+        // Hide login screen, show app
+        if (authScreen) authScreen.style.display = "none"; 
+        if (appWorkspace) appWorkspace.style.display = "block"; 
+        
+        // Load this specific user's data
+        console.log("Active User UID:", user.uid);
+        loadSystemData(user.uid); 
+        loadProfileData(); 
+        initTargetInputs(); // <-- Added to load the user's saved Daily Fuel targets safely
+    } else { 
+        // Show login screen, hide app
+        if (authScreen) authScreen.style.display = "flex"; 
+        if (appWorkspace) appWorkspace.style.display = "none"; 
+        
+        // Wipe the dashboard clean
+        clearDashboardUI();
+    }
+});
+
